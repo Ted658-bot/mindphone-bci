@@ -1,112 +1,246 @@
+
 <!doctype html>
 <html lang="ht">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#101827"><title>MindPhone BCI 0.1</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101827">
+<title>MindPhone BCI 0.2</title>
 <style>
-:root{color-scheme:dark;--bg:#0b1020;--card:#151e31;--line:#2b3850;--txt:#f3f6fc;--muted:#a9b6cb;--blue:#76a9ff;--green:#8fe0bd}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#182846 0%,var(--bg) 55%);font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--txt);padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom)}main{max-width:650px;margin:auto;padding:22px 0 40px}.top{display:flex;align-items:center;gap:12px;margin-bottom:20px}.logo{width:50px;height:50px;border-radius:16px;display:grid;place-items:center;background:#263b60;font-size:27px}.eyebrow{color:var(--green);font-size:12px;letter-spacing:1.5px;font-weight:800}.sub{color:var(--muted);font-size:14px;line-height:1.5}.panel{background:rgba(21,30,49,.94);border:1px solid var(--line);border-radius:20px;padding:18px;margin:14px 0;box-shadow:0 12px 28px #0002}h1{font-size:25px;margin:0 0 4px}h2{font-size:18px;margin:0 0 12px}.status{display:flex;align-items:center;gap:10px}.dot{width:10px;height:10px;border-radius:50%;background:#e7bd67;box-shadow:0 0 12px #e7bd6755}.status strong{display:block}.status small{color:var(--muted)}.badge{margin-left:auto;border:1px solid #8e7440;color:#f4d38b;border-radius:999px;padding:6px 9px;font-size:11px;font-weight:800}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.cmd{min-height:95px;border:1px solid #3c5276;border-radius:15px;background:#1a2942;color:var(--txt);font-size:16px;font-weight:750;padding:13px 8px;cursor:pointer}.cmd span{display:block;font-size:25px;margin-bottom:6px}.cmd:active{transform:scale(.98);background:#2a4165}.secondary{background:transparent;border:1px solid var(--line);color:var(--txt);border-radius:12px;padding:11px 13px;font-size:14px}.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.meter{height:8px;border-radius:8px;background:#27344b;overflow:hidden;margin:12px 0}.meter div{height:100%;width:0;background:linear-gradient(90deg,#76a9ff,#8fe0bd);transition:width .2s}.event{padding:11px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:1.45}.event:last-child{border-bottom:0}.event time{display:block;color:var(--muted);font-size:12px;margin-bottom:3px}.notice{font-size:13px;line-height:1.55;color:var(--muted)}footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
-</style></head><body><main>
-<header class="top"><div class="logo">🧠</div><div><div class="eyebrow">BCI LAB • PROTOTIP 0.1</div><h1>MindPhone</h1><div class="sub">Entèfas eksperimantal pou kòmand san men</div></div></header>
-<section class="panel"><div class="status"><div class="dot" id="dot"></div><div><strong id="statusTitle">An atant</strong><small id="statusText">Pa gen aparèy EEG konekte</small></div><span class="badge">SIMILASYON</span></div><div class="meter"><div id="meter"></div></div><div class="sub" id="feedback">Chwazi yon kòmand pou teste lojik aplikasyon an.</div></section>
-<section class="panel"><h2>Teste kòmand yo</h2><div class="grid"><button class="cmd" data-cmd="select"><span>☑️</span>Chwazi</button><button class="cmd" data-cmd="back"><span>↩️</span>Retounen</button><button class="cmd" data-cmd="next"><span>➡️</span>Pwochen</button><button class="cmd" data-cmd="idle"><span>⏸️</span>Pa fè anyen</button></div><p class="notice">Bouton sa yo se tès manyèl. Yo pa li panse, yo pa resevwa EEG, epi yo pa kontwole lòt aplikasyon iPhone yo.</p></section>
-<section class="panel"><div class="row"><h2>Jounal tès</h2><button class="secondary" id="clear">Netwaye</button></div><div id="log"><div class="event"><time>Preparasyon</time>Aplikasyon pare. Tann yon tès manyèl.</div></div></section>
-<section class="panel"><h2>Pwochen etap teknik</h2><p class="notice">1. Teste bouton yo.<br>2. Amelyore lojik kòmand yo ak anilasyon aksyon.<br>3. Lè gen yon kas EEG, verifye si li ka voye done nan iPhone.<br>4. Etidye opsyon aksè iOS ki pèmèt aplikasyon an kominike ak fonksyon telefòn nan.</p></section>
-<footer>MindPhone BCI 0.1 · Demo lokal · $0</footer></main>
-<script>
-const names={select:'Chwazi',back:'Retounen',next:'Pwochen',idle:'Pa fè anyen'};const descriptions={select:'Seleksyon simile anrejistre. Pa gen okenn aplikasyon ki te louvri.',back:'Retounen simile anrejistre. Pa gen navigasyon sistèm ki fèt.',next:'Pwochen simile anrejistre.',idle:'Sistèm nan pa egzekite okenn aksyon.'};const log=document.getElementById('log');let count=0;
-document.querySelectorAll('[data-cmd]').forEach(btn=>btn.addEventListener('click',()=>{const cmd=btn.dataset.cmd;count++;document.getElementById('statusTitle').textContent=names[cmd];document.getElementById('statusText').textContent='Tès manyèl #'+count+' · Pa gen EEG';document.getElementById('feedback').textContent=descriptions[cmd];document.getElementById('meter').style.width=(cmd==='idle'? '0%':'35%');document.getElementById('dot').style.background=cmd==='idle'?'#e7bd67':'#8fe0bd';const e=document.createElement('div');e.className='event';const t=document.createElement('time');t.textContent=new Date().toLocaleTimeString();const msg=document.createElement('div');msg.textContent='#'+count+' — '+names[cmd]+': '+descriptions[cmd];e.append(t,msg);if(log.querySelector('.event')&&log.querySelector('.event').textContent.startsWith('Aplikasyon pare'))log.replaceChildren();log.prepend(e)}));
-document.getElementById('clear').addEventListener('click',()=>{log.replaceChildren();const e=document.createElement('div');e.className='event';e.textContent='Jounal la netwaye.';log.append(e);count=0;document.getElementById('statusTitle').textContent='An atant';document.getElementById('statusText').textContent='Pa gen aparèy EEG konekte';document.getElementById('feedback').textContent='Chwazi yon kòmand pou teste lojik aplikasyon an.';document.getElementById('meter').style.width='0%';document.getElementById('dot').style.background='#e7bd67'});
-  <!-- MindPhone BCI 0.2: entèfas pou done EEG -->
+:root {
+  color-scheme: dark;
+  --bg: #0b1020;
+  --card: #151e31;
+  --line: #2b3850;
+  --txt: #f3f6fc;
+  --muted: #a9b6cb;
+  --blue: #76a9ff;
+  --green: #8fe0bd;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: radial-gradient(ellipse at top,#182846 0%,var(--bg) 55%);
+  font: 16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color: var(--txt);
+  padding: max(16px,env(safe-area-inset-top)) 16px;
+}
+main { max-width: 650px; margin: auto; padding: 22px 0 40px; }
+.top { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+.logo {
+  width:50px;height:50px;border-radius:16px;display:grid;
+  place-items:center;background:#263b60;font-size:27px;
+}
+.eyebrow { color:var(--green);font-size:12px;letter-spacing:1.5px;font-weight:800; }
+.sub { color:var(--muted);font-size:14px;line-height:1.5; }
+.panel {
+  background:rgba(21,30,49,.94);border:1px solid var(--line);
+  border-radius:20px;padding:18px;margin:14px 0;
+  box-shadow:0 12px 28px #0002;
+}
+h1 { font-size:25px;margin:0 0 4px; }
+h2 { font-size:18px;margin:0 0 12px; }
+h3 { font-size:16px; }
+.status { display:flex;align-items:center;gap:10px; }
+.dot { width:10px;height:10px;border-radius:50%;background:#e7bd67; }
+.status strong { display:block; }
+.status small { color:var(--muted); }
+.badge {
+  margin-left:auto;border:1px solid #8e7440;color:#f4d38b;
+  border-radius:999px;padding:6px 9px;font-size:11px;font-weight:800;
+}
+.grid { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
+.cmd {
+  min-height:95px;border:1px solid #3c5276;border-radius:15px;
+  background:#1a2942;color:var(--txt);font-size:16px;
+  font-weight:750;padding:13px 8px;cursor:pointer;
+}
+.cmd span { display:block;font-size:25px;margin-bottom:6px; }
+.secondary,.action {
+  border-radius:12px;padding:12px 13px;font-size:14px;cursor:pointer;
+}
+.secondary { background:transparent;border:1px solid var(--line);color:var(--txt); }
+.action { background:#2563eb;border:0;color:white; }
+.row { display:flex;justify-content:space-between;align-items:center;gap:10px; }
+.meter { height:8px;border-radius:8px;background:#27344b;overflow:hidden;margin:12px 0; }
+.meter div { height:100%;width:0;background:linear-gradient(90deg,#76a9ff,#8fe0bd);transition:width .2s; }
+.event { padding:11px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:1.45;overflow-wrap:anywhere; }
+.event:last-child { border-bottom:0; }
+.event time { display:block;color:var(--muted);font-size:12px;margin-bottom:3px; }
+.notice { font-size:13px;line-height:1.55;color:var(--muted); }
+.signal { background:#030712;border-radius:10px;padding:14px;overflow-wrap:anywhere;line-height:1.7; }
+button:focus-visible { outline:3px solid var(--blue);outline-offset:2px; }
+footer { text-align:center;color:var(--muted);font-size:12px;padding:12px; }
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <div class="logo">🧠</div>
+  <div>
+    <div class="eyebrow">BCI LAB • PROTOTIP 0.2</div>
+    <h1>MindPhone</h1>
+    <div class="sub">Entèfas eksperimantal pou kòmand san men</div>
+  </div>
+</header>
 
-<section id="mp02" style="font-family:Arial,sans-serif;max-width:600px;margin:24px auto;padding:18px;border:1px solid #64748b;border-radius:16px;background:#111827;color:#f9fafb">
+<section class="panel">
+  <div class="status">
+    <div class="dot" id="dot"></div>
+    <div>
+      <strong id="statusTitle">An atant</strong>
+      <small id="statusText">Pa gen aparèy EEG konekte</small>
+    </div>
+    <span class="badge">SIMILASYON</span>
+  </div>
+  <div class="meter"><div id="meter"></div></div>
+  <div class="sub" id="feedback">Chwazi yon kòmand pou teste lojisyèl an.</div>
+</section>
 
+<section class="panel">
+  <h2>Teste kòmand yo</h2>
+  <div class="grid">
+    <button class="cmd" data-cmd="select"><span>☑️</span>Chwazi</button>
+    <button class="cmd" data-cmd="back"><span>↩️</span>Retounen</button>
+    <button class="cmd" data-cmd="next"><span>➡️</span>Pwochen</button>
+    <button class="cmd" data-cmd="idle"><span>⏸️</span>Pa fè anyen</button>
+  </div>
+  <p class="notice">Sa yo se tès manyèl. Yo pa li panse, yo pa resevwa EEG epi yo pa kontwole lòt aplikasyon iPhone yo.</p>
+</section>
+
+<section class="panel">
+  <div class="row">
+    <h2>Jounal tès</h2>
+    <button class="secondary" id="clear">Netwaye</button>
+  </div>
+  <div id="log">
+    <div class="event">Aplikasyon pare. Tann yon tès manyèl.</div>
+  </div>
+</section>
+
+<section class="panel" id="mp02">
   <h2>🧠 MindPhone BCI 0.2</h2>
+  <p class="sub">Entèfas pou eksperimante ak done EEG</p>
 
-  <p>Entèfas pou resevwa siyal EEG</p>
-
-  <div style="padding:12px;border-radius:10px;background:#1f2937">
-
+  <div class="signal">
     <strong>Estati aparèy:</strong>
-
-    <span id="mp02-status">Pa konekte</span>
-
-    <p id="mp02-note">Pa gen aparèy EEG ki konekte. Pa gen done sèvo reyèl k ap antre.</p>
-
+    <p id="mp02-status">Pa konekte</p>
+    <p id="mp02-note" class="notice">Pa gen kas EEG konekte. Pa gen done sèvo reyèl k ap antre.</p>
   </div>
 
   <h3>Sous done</h3>
+  <p id="mp02-source" class="sub">Okenn done resevwa.</p>
 
-  <p id="mp02-source">Okenn done resevwa.</p>
+  <h3>Siyal EEG (demonstrasyon)</h3>
+  <div id="mp02-display" class="signal">Ap tann done...</div>
 
-  <h3>Siyal EEG</h3>
-
-  <div id="mp02-display" style="padding:16px;background:#030712;border-radius:10px;overflow-wrap:anywhere">
-
-    Ap tann done...
-
-  </div>
-
-  <button id="mp02-test" style="margin-top:14px;padding:12px;border:0;border-radius:8px;background:#2563eb;color:white">
-
-    Teste ak done simulation
-
-  </button>
-
-  <button id="mp02-reset" style="margin-top:8px;padding:12px;border:1px solid #9ca3af;border-radius:8px;background:transparent;color:white">
-
-    Reyajiste
-
-  </button>
-
-  <p style="font-size:13px;color:#cbd5e1">
-
-    Sekirite: simulation sa a pa li panse, li pa mezire aktivite sèvo, epi li pa kontwole iPhone nan.
-
+  <p>
+    <button class="action" id="mp02-test">Teste ak done simulation</button>
+    <button class="secondary" id="mp02-reset">Reyajiste</button>
   </p>
 
+  <p class="notice">
+    Sekirite: valè demonstrasyon yo se done envante. Yo pa mezire aktivite sèvo,
+    yo pa li panse epi yo pa kontwole iPhone nan.
+  </p>
 </section>
 
+<section class="panel">
+  <h2>Pwochen etap teknik</h2>
+  <p class="notice">
+    1. Teste bouton yo.<br>
+    2. Amelyore lojik kòmand yo.<br>
+    3. Lè gen yon aparèy EEG konpatib, etidye kijan pou resevwa done li yo.<br>
+    4. Eksplore fonksyon aksè iOS pou kontwòl ki posib.
+  </p>
+</section>
+
+<footer>MindPhone BCI 0.2 · Pwototip lojisyèl · $0</footer>
+</main>
+
 <script>
+const names = {
+  select: 'Chwazi',
+  back: 'Retounen',
+  next: 'Pwochen',
+  idle: 'Pa fè anyen'
+};
 
-(function () {
+const descriptions = {
+  select: 'Seleksyon simile anrejistre. Pa gen aplikasyon ki louvri.',
+  back: 'Retounen simile anrejistre. Pa gen navigasyon sistèm ki fèt.',
+  next: 'Pwochen simile anrejistre.',
+  idle: 'Sistèm nan pa egzekite okenn aksyon.'
+};
 
-  const status = document.getElementById("mp02-status");
+const log = document.getElementById('log');
+let count = 0;
 
-  const note = document.getElementById("mp02-note");
+document.querySelectorAll('[data-cmd]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const cmd = btn.dataset.cmd;
+    count++;
 
-  const source = document.getElementById("mp02-source");
+    document.getElementById('statusTitle').textContent = names[cmd];
+    document.getElementById('statusText').textContent =
+      'Tès manyèl #' + count + ' · Pa gen EEG';
+    document.getElementById('feedback').textContent = descriptions[cmd];
+    document.getElementById('meter').style.width =
+      cmd === 'idle' ? '0%' : '35%';
+    document.getElementById('dot').style.background =
+      cmd === 'idle' ? '#e7bd67' : '#8fe0bd';
 
-  const display = document.getElementById("mp02-display");
+    const e = document.createElement('div');
+    e.className = 'event';
 
-  document.getElementById("mp02-test").addEventListener("click", function () {
+    const t = document.createElement('time');
+    t.textContent = new Date().toLocaleTimeString();
 
-    status.textContent = "Mòd simulation";
+    const msg = document.createElement('div');
+    msg.textContent = '#' + count + ' — ' + names[cmd] +
+      ': ' + descriptions[cmd];
 
-    note.textContent = "Done atifisyèl pou tès lojisyèl sèlman.";
+    e.append(t, msg);
 
-    source.textContent = "SIMULATION — pa soti nan yon aparèy EEG.";
-
-    display.textContent =
-
-      "Egzanp valè tès: 12, 18, 9, 15, 11. " +
-
-      "Valè sa yo envante pou demonstrasyon; yo pa mezi EEG.";
-
+    if (log.textContent.includes('Aplikasyon pare')) {
+      log.replaceChildren();
+    }
+    log.prepend(e);
   });
+});
 
-  document.getElementById("mp02-reset").addEventListener("click", function () {
+document.getElementById('clear').addEventListener('click', () => {
+  log.replaceChildren();
+  const e = document.createElement('div');
+  e.className = 'event';
+  e.textContent = 'Jounal la netwaye.';
+  log.append(e);
 
-    status.textContent = "Pa konekte";
+  count = 0;
+  document.getElementById('statusTitle').textContent = 'An atant';
+  document.getElementById('statusText').textContent = 'Pa gen aparèy EEG konekte';
+  document.getElementById('feedback').textContent = 'Chwazi yon kòmand pou teste lojisyèl an.';
+  document.getElementById('meter').style.width = '0%';
+  document.getElementById('dot').style.background = '#e7bd67';
+});
 
-    note.textContent = "Pa gen aparèy EEG ki konekte. Pa gen done sèvo reyèl k ap antre.";
+document.getElementById('mp02-test').addEventListener('click', () => {
+  document.getElementById('mp02-status').textContent = 'Mòd simulation';
+  document.getElementById('mp02-note').textContent =
+    'Done atifisyèl pou tès lojisyèl sèlman.';
+  document.getElementById('mp02-source').textContent =
+    'SIMULATION — pa soti nan yon aparèy EEG.';
+  document.getElementById('mp02-display').textContent =
+    'Egzanp valè tès: 12, 18, 9, 15, 11. Valè sa yo envante; yo pa mezi EEG.';
+});
 
-    source.textContent = "Okenn done resevwa.";
-
-    display.textContent = "Ap tann done...";
-
-  });
-
-})();
-
+document.getElementById('mp02-reset').addEventListener('click', () => {
+  document.getElementById('mp02-status').textContent = 'Pa konekte';
+  document.getElementById('mp02-note').textContent =
+    'Pa gen kas EEG konekte. Pa gen done sèvo reyèl k ap antre.';
+  document.getElementById('mp02-source').textContent = 'Okenn done resevwa.';
+  document.getElementById('mp02-display').textContent = 'Ap tann done...';
+});
 </script>
-</script></body></html>
+</body>
+</html>
