@@ -4,412 +4,349 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#050816">
-<title>MindPhone BCI 0.5</title>
+<meta name="theme-color" content="#080b18">
+<title>MindPhone BCI 0.6</title>
 <style>
-:root {
-  --bg:#050816; --panel:#0d1629; --panel2:#101e35;
-  --cyan:#4df6e8; --blue:#6d91ff; --purple:#c184ff;
-  --text:#edf5ff; --muted:#91a4c3; --green:#55f5aa;
-  --border:#263957; --red:#ff718a;
+:root{
+  --bg:#080b18;--panel:#11172b;--line:#283252;
+  --cyan:#51f6ff;--purple:#a78bfa;--green:#50fa9b;
+  --text:#eef3ff;--muted:#9aa8c8;--red:#ff6b8a;
 }
-* { box-sizing:border-box }
-body {
-  margin:0; min-height:100vh; color:var(--text);
-  background:radial-gradient(ellipse at 50% -10%,#203a66 0%,transparent 48%),var(--bg);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+*{box-sizing:border-box}
+body{
+  margin:0;background:radial-gradient(ellipse at top,#19244b 0,#080b18 55%);
+  color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
-button { font:inherit; cursor:pointer; }
-button:disabled { opacity:.4; cursor:not-allowed }
-.app { width:min(100% - 24px,900px); margin:auto; padding:22px 0 40px }
-header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:20px }
-.brand { display:flex; align-items:center; gap:12px }
-.logo {
-  width:48px;height:48px;display:grid;place-items:center;border-radius:15px;
-  background:linear-gradient(135deg,#14576a,#52318c);
-  border:1px solid #4df6e866;font-size:25px;
-  box-shadow:0 0 25px #4df6e822
+header{padding:22px 16px 12px;text-align:center}
+.logo{font-size:12px;letter-spacing:4px;color:var(--cyan);font-weight:800}
+h1{font-size:27px;margin:8px 0}
+.subtitle{font-size:12px;color:var(--muted)}
+main{max-width:760px;margin:auto;padding:10px 13px 35px}
+.panel{
+  background:linear-gradient(145deg,rgba(22,30,58,.96),rgba(12,17,36,.97));
+  border:1px solid var(--line);border-radius:19px;padding:16px;
+  margin-bottom:14px;box-shadow:0 10px 35px #0003;
 }
-h1 { font-size:21px; margin:0 0 5px }
-.subtitle { color:var(--muted);font-size:12px;line-height:1.6 }
-.version { border:1px solid #4df6e866;color:var(--cyan);border-radius:20px;padding:7px 9px;font-size:11px;white-space:nowrap }
-.panel {
-  background:linear-gradient(145deg,#111e33f5,#0a1222f5);
-  border:1px solid var(--border);border-radius:20px;padding:16px;
-  margin-bottom:14px;box-shadow:0 12px 35px #0002;
+.section-title{font-size:13px;font-weight:800;letter-spacing:1px;margin-bottom:12px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.status{font-size:11px;color:var(--green);font-weight:800}
+.brain-stage{
+  min-height:235px;display:grid;place-items:center;position:relative;
+  overflow:hidden;border-radius:16px;
+  background:radial-gradient(ellipse,#1a2450 0,#0b1026 58%,#090d1d 100%);
 }
-.panel-title { display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px;font-weight:750;margin-bottom:14px }
-.pill { color:var(--muted);background:#1b2940;border-radius:20px;padding:6px 9px;font-size:10px }
-.pill.live { color:var(--green) }
-.status { display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px;margin-bottom:12px }
-.dot { width:8px;height:8px;background:var(--red);border-radius:50%;flex:none }
-.dot.live { background:var(--green);box-shadow:0 0 12px var(--green) }
-.brain-wrap {
-  min-height:205px;display:grid;place-items:center;position:relative;overflow:hidden;
-  border:1px solid #263e60;border-radius:16px;
-  background:radial-gradient(ellipse,#152a4c 0%,#091326 67%);
+.brain-stage:before,.brain-stage:after{
+  content:"";position:absolute;width:190px;height:190px;border-radius:50%;
+  border:1px solid #51f6ff35;animation:pulse 3s ease-in-out infinite;
 }
-.brain-orb {
-  width:145px;height:145px;border-radius:50%;display:grid;place-items:center;
-  border:1px solid #4df6e877;
-  background:radial-gradient(circle,#28547777,#0b162a 70%);
-  box-shadow:0 0 30px #4df6e822,inset 0 0 25px #4df6e822;
-  animation:float 4s ease-in-out infinite;
-  position:relative;
+.brain-stage:after{width:225px;height:225px;animation-delay:1.2s}
+@keyframes pulse{0%,100%{transform:scale(.85);opacity:.25}50%{transform:scale(1.12);opacity:.8}}
+.brain{width:170px;height:155px;position:relative;z-index:1;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(2px) rotate(-2deg)}50%{transform:translateY(-7px) rotate(2deg)}}
+.brain svg{width:100%;height:100%;filter:drop-shadow(0 0 12px #51f6ff70)}
+.brain-path{fill:#182e5a;stroke:var(--cyan);stroke-width:2.2;stroke-linejoin:round}
+.brain-line{fill:none;stroke:#a78bfa;stroke-width:1.5;stroke-linecap:round}
+.brain-dot{fill:#fff;filter:drop-shadow(0 0 5px var(--cyan))}
+.scan{
+  position:absolute;z-index:2;width:100%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  box-shadow:0 0 15px var(--cyan);animation:scan 3.5s linear infinite;
 }
-.brain-orb::before,.brain-orb::after {
-  content:"";position:absolute;inset:9px;border-radius:50%;
-  border:1px dashed #4df6e866;animation:spin 15s linear infinite;
+@keyframes scan{from{top:0}to{top:100%}}
+.brain-label{position:absolute;bottom:10px;font-size:10px;color:var(--cyan);letter-spacing:2px}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.metric{background:#080d20;border:1px solid #283252;border-radius:12px;padding:11px 7px;text-align:center}
+.metric strong{display:block;font-size:19px;color:var(--cyan)}
+.metric span{font-size:10px;color:var(--muted)}
+canvas{width:100%;height:115px;display:block;background:#090e20;border-radius:12px}
+.bands{display:grid;gap:12px}
+.band{display:grid;grid-template-columns:65px 1fr 38px;align-items:center;gap:8px;font-size:11px}
+.track{height:7px;background:#252d48;border-radius:10px;overflow:hidden}
+.fill{height:100%;width:20%;border-radius:10px;transition:width .35s}
+.alpha{background:#51f6ff}.beta{background:#a78bfa}
+.theta{background:#50fa9b}.delta{background:#ffbd69}
+.buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+button{
+  border:1px solid #344264;border-radius:12px;padding:12px 8px;
+  background:#171f3b;color:var(--text);font-size:12px;font-weight:750;
+  cursor:pointer;touch-action:manipulation;
 }
-.brain-orb::after { inset:-8px;border-color:#b784ff55;animation-direction:reverse;animation-duration:22s }
-.brain-icon { font-size:65px;filter:drop-shadow(0 0 13px #4df6e8aa) }
-.brain-caption { position:absolute;bottom:10px;left:0;right:0;text-align:center;color:var(--cyan);font-size:10px;letter-spacing:2px }
-@keyframes float { 0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)} }
-@keyframes spin { to{transform:rotate(360deg)} }
-.signal-box { margin-top:13px }
-canvas { display:block;width:100%;height:145px;border-radius:12px;background:#07101e;border:1px solid #263e60 }
-.legend { display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:9px;color:var(--muted);font-size:10px }
-.metrics { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px }
-.metric { background:#081222;border:1px solid var(--border);border-radius:13px;padding:12px;min-width:0 }
-.metric-label { font-size:11px;color:var(--muted);margin-bottom:8px }
-.metric-value { font-size:22px;font-weight:800;overflow-wrap:anywhere }
-.unit { color:var(--muted);font-size:10px;font-weight:400 }
-.meter { height:5px;background:#25354d;border-radius:20px;overflow:hidden;margin-top:9px }
-.fill { height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width .25s }
-.bands { display:grid;gap:12px }
-.band-head { display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px }
-.band-head span:last-child { color:var(--muted) }
-.band .fill { background:linear-gradient(90deg,var(--purple),var(--cyan)) }
-.buttons { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px }
-.btn {
-  border:1px solid var(--border);border-radius:12px;padding:12px 8px;
-  min-height:45px;background:#19273e;color:var(--text);font-size:12px;font-weight:700;
-  transition:transform .12s,filter .12s
+button:active{transform:scale(.97)}
+button.primary{background:linear-gradient(110deg,#176b82,#4941a5);border-color:#51f6ff80}
+button.stop{background:#35192d;border-color:#8a3458}
+button:disabled{opacity:.4}
+.phone{
+  max-width:300px;margin:0 auto;padding:10px;border-radius:31px;
+  background:#05070d;border:2px solid #53607b;
+  box-shadow:0 0 0 3px #141c33,0 15px 35px #0006;
 }
-.btn:active { transform:scale(.97) }
-.primary { color:#04161a;border:none;background:linear-gradient(110deg,var(--cyan),#7baaff) }
-.purple { background:#30234b;border-color:#a77aff66 }
-.danger { color:#ffb0bf;background:#351b2b;border-color:#ff718a44 }
-.row { display:flex;gap:8px;flex-wrap:wrap;margin-top:10px }
-.row .btn { flex:1 }
-.result {
-  background:#071322;border:1px solid #4df6e844;border-radius:14px;padding:15px;margin-top:12px
+.phone-top{height:18px;display:flex;justify-content:center}
+.notch{width:85px;height:13px;background:#03050a;border-radius:0 0 12px 12px}
+.phone-screen{
+  min-height:275px;border-radius:21px;padding:15px 12px;
+  background:linear-gradient(160deg,#172b53,#10142d 70%,#24153f);
+  overflow:hidden;
 }
-.result-label { color:var(--muted);font-size:10px;margin-bottom:8px }
-.result-title { font-size:19px;font-weight:800 }
-.result-desc { color:var(--muted);font-size:12px;line-height:1.6;margin-top:7px }
-.virtual-screen {
-  min-height:120px;border:1px solid #314b70;border-radius:14px;padding:14px;
-  background:linear-gradient(135deg,#101e35,#0a1324);margin-top:12px
+.phone-time{font-size:12px;color:#c9d6ff}
+.phone-clock{font-size:38px;font-weight:300;margin:10px 0 2px}
+.phone-date{font-size:11px;color:#b8c8f4}
+.phone-card{padding:12px;margin-top:12px;background:#ffffff12;border:1px solid #ffffff20;border-radius:13px}
+.phone-card h3{margin:0 0 6px;font-size:13px}
+.phone-card p{font-size:11px;line-height:1.5;color:#c9d6ff;margin:0}
+.phone-apps{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}
+.app{
+  padding:12px 2px;border-radius:12px;background:#ffffff10;
+  text-align:center;font-size:10px;border:1px solid #ffffff16;
 }
-.virtual-top { display:flex;justify-content:space-between;gap:8px;font-size:10px;color:var(--muted);margin-bottom:14px }
-.virtual-content { font-size:16px;font-weight:750;line-height:1.5 }
-.virtual-sub { font-size:11px;color:var(--muted);margin-top:7px }
-.history { list-style:none;margin:0;padding:0;display:grid;gap:7px }
-.history li { display:flex;justify-content:space-between;gap:8px;background:#081322;border:1px solid #21344d;border-radius:10px;padding:10px;font-size:11px }
-.history small { color:var(--muted);text-align:right }
-.empty { color:var(--muted);justify-content:center!important;padding:15px!important }
-.note { font-size:11px;line-height:1.7;color:#9eafc9;border-left:3px solid var(--purple);padding-left:11px }
-footer { text-align:center;color:#7185a3;font-size:10px;padding:10px }
-@media(min-width:620px) {
-  .metrics { grid-template-columns:repeat(4,minmax(0,1fr)) }
-  .buttons { grid-template-columns:repeat(4,minmax(0,1fr)) }
-  .layout { display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start }
-  .layout .panel { margin-bottom:0 }
-  .layout { row-gap:14px }
-}
+.app span{display:block;font-size:22px;margin-bottom:5px}
+.phone-nav{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:10px}
+.phone-nav button{padding:9px 2px;font-size:10px;background:#ffffff10;border-color:#ffffff20}
+.log{max-height:150px;overflow:auto;font-size:11px;line-height:1.8;color:#bdc8e4}
+.log div{border-bottom:1px solid #ffffff0b;padding:4px 0}
+.log b{color:var(--cyan)}
+.note{font-size:11px;line-height:1.6;color:var(--muted)}
+.footer{text-align:center;font-size:10px;color:#7483a6;padding:12px}
+@media(min-width:620px){.columns{display:grid;grid-template-columns:1fr 1fr;gap:12px}.columns .panel{margin-bottom:14px}}
 </style>
 </head>
 <body>
-<main class="app">
 <header>
-  <div class="brand">
-    <div class="logo">🧠</div>
-    <div>
-      <h1>MindPhone BCI</h1>
-      <div class="subtitle">Neural Control Lab · Simulation Interface</div>
-    </div>
-  </div>
-  <span class="version">V0.5</span>
+  <div class="logo">NEURAL INTERFACE LAB</div>
+  <h1>🧠 MindPhone BCI <span style="color:#51f6ff">0.6</span></h1>
+  <div class="subtitle">BRAIN SIGNAL SIMULATOR · FUTURE PHONE INTERFACE</div>
 </header>
 
+<main>
 <section class="panel">
-  <div class="panel-title"><span>◈ Neural interface</span><span class="pill" id="statusPill">STANDBY</span></div>
-  <div class="status"><span class="dot" id="statusDot"></span><span id="statusText">Similatè a pare</span></div>
-  <div class="brain-wrap">
-    <div class="brain-orb"><span class="brain-icon">🧠</span></div>
-    <div class="brain-caption">NEURAL SIGNAL SIMULATION</div>
-  </div>
   <div class="row">
-    <button class="btn primary" id="startBtn">▶ Kòmanse</button>
-    <button class="btn" id="stopBtn" disabled>Ⅱ Kanpe</button>
-    <button class="btn danger" id="resetBtn">↺ Reyajiste</button>
+    <div class="section-title">01 / NEURAL CORE</div>
+    <div class="status" id="systemStatus">● SIMULATION ACTIVE</div>
   </div>
-</section>
-
-<div class="layout">
-<section class="panel">
-  <div class="panel-title"><span>📈 EEG Waveform</span><span class="pill">SIMILE</span></div>
-  <canvas id="graph"></canvas>
-  <div class="legend"><span>● Siyal atifisyèl</span><span id="samples">0 echantiyon</span><span id="elapsed">0.0 s</span></div>
-</section>
-
-<section class="panel">
-  <div class="panel-title"><span>📊 Analiz siyal</span><span class="pill">DEMO DATA</span></div>
+  <div class="brain-stage">
+    <div class="scan"></div>
+    <div class="brain">
+      <svg viewBox="0 0 200 175" aria-label="Sèvo futuris anime">
+        <path class="brain-path" d="M98 29 C83 7 56 16 53 36 C29 31 20 56 31 72 C13 88 25 113 43 117 C42 139 64 148 80 136 C86 151 98 151 100 139 L100 36 Z"/>
+        <path class="brain-path" d="M102 29 C117 7 144 16 147 36 C171 31 180 56 169 72 C187 88 175 113 157 117 C158 139 136 148 120 136 C114 151 102 151 100 139 L100 36 Z"/>
+        <path class="brain-line" d="M45 49 Q67 40 78 62 T95 84 M31 79 Q54 68 66 91 T95 112 M44 113 Q65 101 78 125 M60 31 Q82 43 71 57 M88 26 Q97 44 83 51"/>
+        <path class="brain-line" d="M155 49 Q133 40 122 62 T105 84 M169 79 Q146 68 134 91 T105 112 M156 113 Q135 101 122 125 M140 31 Q118 43 129 57 M112 26 Q103 44 117 51"/>
+        <path class="brain-line" d="M100 37 L100 138"/>
+        <circle class="brain-dot" cx="65" cy="59" r="3"/>
+        <circle class="brain-dot" cx="139" cy="77" r="3"/>
+        <circle class="brain-dot" cx="78" cy="115" r="2.5"/>
+        <circle class="brain-dot" cx="124" cy="47" r="2.5"/>
+      </svg>
+    </div>
+    <div class="brain-label">NEURAL FIELD // SIMULATED</div>
+  </div>
   <div class="metrics">
-    <div class="metric"><div class="metric-label">Anplitid</div><div class="metric-value"><span id="amp">0.00</span><span class="unit"> u.a.</span></div><div class="meter"><div class="fill" id="ampFill"></div></div></div>
-    <div class="metric"><div class="metric-label">Frekans</div><div class="metric-value"><span id="freq">8.0</span><span class="unit"> Hz*</span></div><div class="meter"><div class="fill" id="freqFill"></div></div></div>
-    <div class="metric"><div class="metric-label">Bri simile</div><div class="metric-value"><span id="noise">12</span><span class="unit"> %*</span></div><div class="meter"><div class="fill" id="noiseFill"></div></div></div>
-    <div class="metric"><div class="metric-label">Kalite simile</div><div class="metric-value" id="quality">—</div><div class="meter"><div class="fill" id="qualityFill"></div></div></div>
+    <div class="metric"><strong id="focus">78%</strong><span>FOCUS SIM.</span></div>
+    <div class="metric"><strong id="signal">94%</strong><span>SIGNAL QUALITY</span></div>
+    <div class="metric"><strong id="commands">0</strong><span>COMMANDS</span></div>
   </div>
 </section>
 
+<div class="columns">
 <section class="panel">
-  <div class="panel-title"><span>〰️ Bann frekans</span><span class="pill">VALÈ DEMO</span></div>
+  <div class="row"><div class="section-title">02 / EEG WAVEFORM</div><span class="status">LIVE*</span></div>
+  <canvas id="eeg"></canvas>
+  <p class="note">*Graf la se yon siyal atifisyèl ki ap anime, se pa mezi sèvo reyèl.</p>
+</section>
+
+<section class="panel">
+  <div class="section-title">03 / SIGNAL ANALYZER</div>
   <div class="bands">
-    <div class="band"><div class="band-head"><span>Delta</span><span id="deltaVal">20%</span></div><div class="meter"><div class="fill" id="delta"></div></div></div>
-    <div class="band"><div class="band-head"><span>Theta</span><span id="thetaVal">35%</span></div><div class="meter"><div class="fill" id="theta"></div></div></div>
-    <div class="band"><div class="band-head"><span>Alpha</span><span id="alphaVal">65%</span></div><div class="meter"><div class="fill" id="alpha"></div></div></div>
-    <div class="band"><div class="band-head"><span>Beta</span><span id="betaVal">45%</span></div><div class="meter"><div class="fill" id="beta"></div></div></div>
-    <div class="band"><div class="band-head"><span>Gamma</span><span id="gammaVal">25%</span></div><div class="meter"><div class="fill" id="gamma"></div></div></div>
+    <div class="band"><span>Alpha</span><div class="track"><div id="alpha" class="fill alpha"></div></div><b id="alphaN">62%</b></div>
+    <div class="band"><span>Beta</span><div class="track"><div id="beta" class="fill beta"></div></div><b id="betaN">44%</b></div>
+    <div class="band"><span>Theta</span><div class="track"><div id="theta" class="fill theta"></div></div><b id="thetaN">31%</b></div>
+    <div class="band"><span>Delta</span><div class="track"><div id="delta" class="fill delta"></div></div><b id="deltaN">18%</b></div>
   </div>
-  <p class="note" style="margin-top:14px">Bann frekans sa yo se valè atifisyèl pou aprann sou koòdone EEG. Yo pa mezire aktivite sèvo ou.</p>
-</section>
-
-<section class="panel">
-  <div class="panel-title"><span>🎮 Sant kontwòl</span><span class="pill" id="modePill">MANYÈL</span></div>
-  <div class="subtitle">Teste kòmand yo pou chanje sa ki parèt nan ekran vityèl la.</div>
-  <div class="buttons" style="margin-top:13px">
-    <button class="btn primary" data-cmd="Chwazi">✓ Chwazi</button>
-    <button class="btn purple" data-cmd="Retounen">↩ Retounen</button>
-    <button class="btn" data-cmd="Pwochen">→ Pwochen</button>
-    <button class="btn danger" data-cmd="Pa fè anyen">⏸ Pa fè anyen</button>
-  </div>
-  <div class="result" aria-live="polite">
-    <div class="result-label">DÈNYE KÒMAND</div>
-    <div class="result-title" id="resultTitle">Sistèm nan pare</div>
-    <div class="result-desc" id="resultDesc">Chwazi yon kòmand pou teste koòdone a.</div>
-  </div>
-  <div class="virtual-screen">
-    <div class="virtual-top"><span>VIRTUAL PHONE</span><span id="virtualPage">Ekran 1 / 4</span></div>
-    <div class="virtual-content" id="virtualTitle">Akèy MindPhone</div>
-    <div class="virtual-sub" id="virtualSub">Ekran demonstrasyon kontwole pa bouton yo.</div>
-  </div>
-  <div class="row">
-    <button class="btn primary" id="autoBtn">⚡ Mòd otomatik</button>
-    <button class="btn" id="manualBtn" disabled>✋ Mòd manyèl</button>
+  <div class="phone-card">
+    <h3>🧠 Pattern classification</h3>
+    <p id="pattern">Ap tann analizè a...</p>
+    <p id="confidence" style="margin-top:6px;color:#51f6ff">Konfyans simile: --</p>
   </div>
 </section>
 </div>
 
-<section class="panel" style="margin-top:14px">
-  <div class="panel-title"><span>📜 Istwa kòmand</span><span class="pill" id="logCount">0</span></div>
-  <ul class="history" id="history"><li class="empty">Pa gen kòmand ankò.</li></ul>
-  <button class="btn danger" id="clearBtn" style="width:100%;margin-top:10px">Efase istwa</button>
+<section class="panel">
+  <div class="row">
+    <div class="section-title">04 / DEMO COMMANDS</div>
+    <span class="status" id="autoStatus">MANUAL</span>
+  </div>
+  <div class="buttons">
+    <button class="primary" onclick="runCommand('home')">🏠 Home</button>
+    <button onclick="runCommand('music')">🎵 Music</button>
+    <button onclick="runCommand('messages')">💬 Messages</button>
+    <button onclick="runCommand('focus')">🎯 Focus mode</button>
+    <button onclick="runCommand('back')">↩️ Back</button>
+    <button class="stop" id="autoButton" onclick="toggleAuto()">▶ Auto simulation</button>
+  </div>
+  <p class="note">Kòmand yo chanje ekran telefòn vityèl la sèlman. Yo pa ouvri aplikasyon iPhone ou.</p>
 </section>
 
 <section class="panel">
-  <div class="panel-title">🛡️ Enfòmasyon enpòtan</div>
-  <p class="note">MindPhone BCI 0.5 se yon demonstrasyon lojisyèl. Grafik, frekans ak bann siyal yo simile. Pa gen detektè EEG ki konekte, aplikasyon an pa li panse, epi kòmand yo sèlman chanje ekran vityèl ki nan paj sa a. Li pa kontwole lòt fonksyon iPhone ou.</p>
+  <div class="row">
+    <div class="section-title">05 / VIRTUAL SMARTPHONE</div>
+    <span class="status">ONLINE</span>
+  </div>
+  <div class="phone">
+    <div class="phone-top"><div class="notch"></div></div>
+    <div class="phone-screen" id="phoneScreen">
+      <div class="row"><span class="phone-time" id="phoneTime">21:00</span><span>▰ ▰  Wi-Fi</span></div>
+      <div class="phone-clock" id="phoneClock">21:00</div>
+      <div class="phone-date">MindPhone Demo · Interface 0.6</div>
+      <div class="phone-card">
+        <h3 id="phoneTitle">👋 Byenveni!</h3>
+        <p id="phoneText">Telefòn vityèl ou pare. Chwazi yon kòmand pou teste koòdone a.</p>
+      </div>
+      <div class="phone-apps">
+        <div class="app"><span>🧠</span>Mind</div>
+        <div class="app"><span>🎵</span>Music</div>
+        <div class="app"><span>💬</span>Chat</div>
+        <div class="app"><span>📅</span>Agenda</div>
+        <div class="app"><span>🎯</span>Focus</div>
+        <div class="app"><span>⚙️</span>Settings</div>
+      </div>
+    </div>
+    <div class="phone-nav">
+      <button onclick="runCommand('home')">Home</button>
+      <button onclick="runCommand('music')">Music</button>
+      <button onclick="runCommand('messages')">Chat</button>
+      <button onclick="runCommand('focus')">Focus</button>
+    </div>
+  </div>
 </section>
-<footer>MindPhone BCI 0.5 · Neural Control Lab · Simulation only</footer>
+
+<section class="panel">
+  <div class="row">
+    <div class="section-title">06 / SYSTEM LOG</div>
+    <button onclick="clearLog()" style="padding:7px 10px">Clear</button>
+  </div>
+  <div class="log" id="log"></div>
+</section>
+
+<section class="panel">
+  <div class="section-title">ℹ️ ABOUT THIS DEMO</div>
+  <p class="note">MindPhone BCI 0.6 se yon pwojè eksperimantal pou aprann sou koòdone sèvo-òdinatè. Graf EEG, valè Alpha/Beta/Theta/Delta, klasifikasyon siyal ak kòmand otomatik yo se simulation lojisyèl. Pa gen detektè sèvo oswa EEG ki konekte. Pwojè sa a pa li panse epi li pa kontwole telefòn reyèl ou.</p>
+</section>
+<div class="footer">MINDPHONE BCI 0.6 · EXPERIMENTAL SIMULATION · BUILT FOR LEARNING</div>
 </main>
 
 <script>
-(() => {
-"use strict";
 const $ = id => document.getElementById(id);
-const canvas = $("graph");
-const ctx = canvas.getContext("2d");
-
-let running = false, auto = false, raf = null;
-let previous = 0, elapsed = 0, phase = 0, total = 0, lastMetrics = 0, lastAuto = 0;
-let values = [], logs = [], page = 0;
-
-const screens = [
-  ["Akèy MindPhone","Byenveni nan sant kontwòl la."],
-  ["Sant siyal","Sa a se yon ekran analiz vityèl."],
-  ["Kontwòl aplikasyon","Sa a se yon ekran kontwòl demonstrasyon."],
-  ["Paramèt sistèm","Sa a se yon ekran paramèt demonstrasyon."]
-];
-
-const commands = {
-  "Chwazi": ["✓ Chwazi","Kòmand simile a konfime chwa aktyèl la."],
-  "Retounen": ["↩ Retounen","Koòdone vityèl la retounen nan ekran anvan an."],
-  "Pwochen": ["→ Pwochen","Koòdone vityèl la ale nan pwochen ekran an."],
-  "Pa fè anyen": ["⏸ Pa fè anyen","Sistèm nan pa chanje ekran an."]
+let commandCount=0, autoMode=false, autoTimer=null, currentPage='home';
+let historyPages=[];
+let frame=0;
+const pages={
+ home:{title:'🏠 Home',text:'Byenveni nan MindPhone BCI. Sa a se ekran prensipal telefòn vityèl la.'},
+ music:{title:'🎵 Music Center',text:'Mòd mizik lan aktive nan demonstrasyon an. Pa gen mizik reyèl k ap jwe.'},
+ messages:{title:'💬 Messages',text:'Sant mesaj vityèl la ouvri. Sa a se sèlman yon egzanp koòdone.'},
+ focus:{title:'🎯 Focus Mode',text:'Mòd konsantrasyon an aktive. Valè konsantrasyon yo rete simile.'},
+ back:{title:'↩️ Previous Screen',text:'Ou retounen sou ekran anvan an.'}
 };
 
-function resize() {
-  const r = canvas.getBoundingClientRect();
-  if (!r.width || !r.height) return;
-  const dpr = Math.min(devicePixelRatio || 1, 2);
-  canvas.width = Math.round(r.width * dpr);
-  canvas.height = Math.round(r.height * dpr);
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  draw();
+function log(message){
+ const item=document.createElement('div');
+ const time=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+ item.innerHTML='<b>['+time+']</b> '+message;
+ $('log').prepend(item);
+ while($('log').children.length>35)$('log').lastChild.remove();
 }
-
-function draw() {
-  const r = canvas.getBoundingClientRect(), w = r.width, h = r.height;
-  if (!w || !h) return;
-  ctx.clearRect(0,0,w,h);
-  ctx.fillStyle = "#07101e"; ctx.fillRect(0,0,w,h);
-  ctx.strokeStyle = "rgba(92,135,183,.15)"; ctx.lineWidth = 1;
-  for(let x=0;x<w;x+=24){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
-  for(let y=0;y<h;y+=24){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
-  ctx.strokeStyle = "rgba(77,246,232,.22)";
-  ctx.beginPath();ctx.moveTo(0,h/2);ctx.lineTo(w,h/2);ctx.stroke();
-  if(values.length < 2) {
-    ctx.fillStyle="#91a4c3";ctx.font="12px sans-serif";
-    ctx.fillText("Peze Kòmanse pou lanse siyal la",12,h/2-8);
-    return;
-  }
-  const visible = values.slice(-Math.max(2,Math.floor(w/2)));
-  const step = w/(visible.length-1);
-  ctx.beginPath();
-  visible.forEach((v,i)=>{
-    const x=i*step, y=h/2-v*h*.36;
-    if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
-  });
-  ctx.strokeStyle="#4df6e8";ctx.lineWidth=2;
-  ctx.shadowColor="#4df6e8";ctx.shadowBlur=7;ctx.stroke();ctx.shadowBlur=0;
-  const v=visible[visible.length-1];
-  ctx.beginPath();ctx.arc(w-1,h/2-v*h*.36,3,0,Math.PI*2);
-  ctx.fillStyle="#fff";ctx.fill();
+function runCommand(page){
+ if(page==='back'){
+   page=historyPages.pop()||'home';
+ }else if(page!==currentPage){
+   historyPages.push(currentPage);
+ }
+ currentPage=page;
+ const p=pages[page]||pages.home;
+ $('phoneTitle').textContent=p.title;
+ $('phoneText').textContent=p.text;
+ commandCount++;
+ $('commands').textContent=commandCount;
+ log('Kòmand demo: <b>'+p.title+'</b>');
 }
-
-function signal(t) {
-  return Math.max(-1,Math.min(1,
-    .47*Math.sin(t*2*Math.PI*8)+
-    .20*Math.sin(t*2*Math.PI*3.2)+
-    .09*Math.sin(t*2*Math.PI*13)+
-    (Math.random()-.5)*.18
-  ));
+function clearLog(){$('log').innerHTML='';log('Jounal la netwaye.');}
+function toggleAuto(){
+ autoMode=!autoMode;
+ $('autoStatus').textContent=autoMode?'AUTO ACTIVE':'MANUAL';
+ $('autoButton').textContent=autoMode?'⏸ Stop auto':'▶ Auto simulation';
+ $('autoButton').classList.toggle('stop',autoMode);
+ if(autoMode){
+   log('Simulation otomatik demare.');
+   autoTimer=setInterval(()=>{
+     const choices=['home','music','messages','focus'];
+     runCommand(choices[Math.floor(Math.random()*choices.length)]);
+   },4500);
+ }else{
+   clearInterval(autoTimer);autoTimer=null;
+   log('Simulation otomatik kanpe.');
+ }
 }
-
-function setBar(id,value){$(id).style.width=Math.max(0,Math.min(100,value))+"%";}
-
-function metrics() {
-  if(!values.length)return;
-  const sample=values.slice(-100);
-  const rms=Math.sqrt(sample.reduce((s,v)=>s+v*v,0)/sample.length);
-  const noise=8+Math.random()*18;
-  const freq=7+Math.random()*4;
-  const quality=Math.round(100-noise*1.5);
-  $("amp").textContent=rms.toFixed(2);
-  $("freq").textContent=freq.toFixed(1);
-  $("noise").textContent=Math.round(noise);
-  $("quality").textContent=quality+"%";
-  setBar("ampFill",rms*100);setBar("freqFill",freq/15*100);
-  setBar("noiseFill",noise);setBar("qualityFill",quality);
-
-  const bandNames=["delta","theta","alpha","beta","gamma"];
-  const bands=bandNames.map(()=>Math.round(10+Math.random()*85));
-  bandNames.forEach((name,i)=>{
-    $(name+"Val").textContent=bands[i]+"%";
-    setBar(name,bands[i]);
-  });
+function updateMetrics(){
+ const alpha=Math.round(25+Math.random()*70);
+ const beta=Math.round(20+Math.random()*75);
+ const theta=Math.round(10+Math.random()*65);
+ const delta=Math.round(5+Math.random()*45);
+ [['alpha',alpha],['beta',beta],['theta',theta],['delta',delta]].forEach(([name,val])=>{
+   $(name).style.width=val+'%';
+   $(name+'N').textContent=val+'%';
+ });
+ const focus=Math.max(35,Math.min(99,Math.round(beta*.65+alpha*.35)));
+ const quality=Math.round(80+Math.random()*19);
+ $('focus').textContent=focus+'%';
+ $('signal').textContent=quality+'%';
+ let pattern,confidence;
+ if(beta>65){pattern='High-activity pattern (simile)';confidence=80+Math.round(Math.random()*15);}
+ else if(alpha>60){pattern='Relaxed pattern (simile)';confidence=78+Math.round(Math.random()*18);}
+ else if(theta>48){pattern='Low-activity pattern (simile)';confidence=72+Math.round(Math.random()*20);}
+ else{pattern='Mixed pattern (simile)';confidence=65+Math.round(Math.random()*25);}
+ $('pattern').textContent=pattern;
+ $('confidence').textContent='Konfyans simile: '+confidence+'%';
 }
-
-function status() {
-  $("statusDot").classList.toggle("live",running);
-  $("statusText").textContent=running?(auto?"Similasyon aktif · otomatik":"Similasyon aktif · manyèl"):"Similatè a kanpe";
-  $("statusPill").textContent=running?"ACTIVE":"STANDBY";
-  $("statusPill").classList.toggle("live",running);
-  $("startBtn").disabled=running;$("stopBtn").disabled=!running;
-  $("autoBtn").disabled=auto;$("manualBtn").disabled=!auto;
-  $("modePill").textContent=auto?"OTOMATIK":"MANYÈL";
+const canvas=$('eeg'),ctx=canvas.getContext('2d');
+let points=Array.from({length:180},()=>0);
+function resizeCanvas(){
+ const rect=canvas.getBoundingClientRect();
+ const dpr=Math.min(window.devicePixelRatio||1,2);
+ canvas.width=Math.max(1,Math.floor(rect.width*dpr));
+ canvas.height=Math.max(1,Math.floor(rect.height*dpr));
+ ctx.setTransform(dpr,0,0,dpr,0,0);
 }
-
-function updateScreen() {
-  $("virtualTitle").textContent=screens[page][0];
-  $("virtualSub").textContent=screens[page][1];
-  $("virtualPage").textContent="Ekran "+(page+1)+" / "+screens.length;
+function drawEEG(){
+ const w=canvas.clientWidth,h=canvas.clientHeight;
+ if(!w||!h)return;
+ ctx.clearRect(0,0,w,h);
+ ctx.strokeStyle='#263252';ctx.lineWidth=1;
+ for(let y=20;y<h;y+=25){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+ for(let x=25;x<w;x+=35){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+ points.push(Math.sin(frame*.17)*10+Math.sin(frame*.43)*5+(Math.random()-.5)*20);
+ if(points.length>180)points.shift();
+ ctx.beginPath();
+ points.forEach((v,i)=>{
+   const x=i/(points.length-1)*w;
+   const y=h/2+v;
+   if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+ });
+ ctx.strokeStyle='#51f6ff';ctx.lineWidth=1.8;
+ ctx.shadowColor='#51f6ff';ctx.shadowBlur=7;ctx.stroke();ctx.shadowBlur=0;
+ frame++;
+ requestAnimationFrame(drawEEG);
 }
-
-function command(name,source="Manyèl") {
-  if(!commands[name])return;
-  if(name==="Pwochen")page=(page+1)%screens.length;
-  if(name==="Retounen")page=(page-1+screens.length)%screens.length;
-  updateScreen();
-  $("resultTitle").textContent=commands[name][0];
-  $("resultDesc").textContent=commands[name][1];
-  logs.unshift({name,source,time:new Date().toLocaleTimeString()});
-  logs=logs.slice(0,25);
-  renderLogs();
+function updateClock(){
+ const now=new Date();
+ const t=now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+ $('phoneTime').textContent=t;
+ $('phoneClock').textContent=t;
 }
-
-function renderLogs() {
-  $("logCount").textContent=logs.length+" kòmand";
-  const ul=$("history");ul.innerHTML="";
-  if(!logs.length){
-    const li=document.createElement("li");li.className="empty";
-    li.textContent="Pa gen kòmand ankò.";ul.appendChild(li);return;
-  }
-  logs.forEach(item=>{
-    const li=document.createElement("li"),left=document.createElement("span"),right=document.createElement("small");
-    left.textContent=item.name+" · "+item.source;right.textContent=item.time;
-    li.append(left,right);ul.appendChild(li);
-  });
-}
-
-function tick(t) {
-  if(!running)return;
-  if(!previous)previous=t;
-  const dt=Math.min((t-previous)/1000,.05);
-  previous=t;elapsed+=dt;phase+=dt;
-  for(let i=0;i<3;i++){values.push(signal(phase+i*.012));total++;}
-  if(values.length>1500)values.splice(0,values.length-1500);
-  draw();
-  $("samples").textContent=total+" echantiyon";
-  $("elapsed").textContent=elapsed.toFixed(1)+" s";
-  if(t-lastMetrics>350){metrics();lastMetrics=t;}
-  if(auto&&t-lastAuto>4000){
-    lastAuto=t;
-    const names=Object.keys(commands);
-    command(names[Math.floor(Math.random()*names.length)],"Otomatik");
-  }
-  raf=requestAnimationFrame(tick);
-}
-
-function start() {
-  if(running)return;
-  running=true;previous=0;status();raf=requestAnimationFrame(tick);
-}
-function stop() {
-  running=false;
-  if(raf!==null)cancelAnimationFrame(raf);
-  raf=null;previous=0;status();draw();
-}
-function reset() {
-  stop();auto=false;elapsed=0;phase=0;total=0;values=[];
-  lastMetrics=0;lastAuto=0;page=0;
-  ["amp","noise"].forEach(id=>$(id).textContent=id==="amp"?"0.00":"12");
-  $("freq").textContent="8.0";$("quality").textContent="—";
-  ["ampFill","freqFill","noiseFill","qualityFill","delta","theta","alpha","beta","gamma"].forEach(id=>setBar(id,0));
-  ["delta","theta","alpha","beta","gamma"].forEach(id=>$(id+"Val").textContent="0%");
-  $("samples").textContent="0 echantiyon";$("elapsed").textContent="0.0 s";
-  $("resultTitle").textContent="Sistèm nan pare";
-  $("resultDesc").textContent="Chwazi yon kòmand pou teste koòdone a.";
-  updateScreen();status();draw();
-}
-
-$("startBtn").addEventListener("click",start);
-$("stopBtn").addEventListener("click",stop);
-$("resetBtn").addEventListener("click",reset);
-document.querySelectorAll("[data-cmd]").forEach(btn=>{
-  btn.addEventListener("click",()=>command(btn.dataset.cmd));
-});
-$("autoBtn").addEventListener("click",()=>{
-  auto=true;lastAuto=performance.now();status();if(!running)start();
-});
-$("manualBtn").addEventListener("click",()=>{auto=false;status();});
-$("clearBtn").addEventListener("click",()=>{logs=[];renderLogs();});
-window.addEventListener("resize",resize);
-
-resize();renderLogs();updateScreen();status();
-})();
+window.addEventListener('resize',resizeCanvas);
+resizeCanvas();drawEEG();updateClock();updateMetrics();updateClock();
+setInterval(updateMetrics,2200);
+setInterval(updateClock,10000);
+log('MindPhone BCI 0.6 pare.');
+log('EEG simulator: siyal atifisyèl sèlman.');
+log('Virtual phone: pare pou resevwa kòmand demo.');
 </script>
 </body>
 </html>
