@@ -4,172 +4,177 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#07111f">
-<title>MindPhone BCI v0.9 — Demo Dashboard</title>
+<title>MindPhone BCI v1.0 — Neural Lab</title>
 <style>
-:root{color-scheme:dark;--bg:#06101d;--panel:#0b1a2b;--panel2:#10233a;--line:#203b57;--cyan:#62e9ff;--blue:#6f8cff;--green:#67f5bd;--amber:#ffd166;--text:#edf7ff;--muted:#9db2c9;--pink:#ff7bd5}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#102744 0,#071321 48%,#040a12 100%);font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);min-height:100vh}
-.wrap{max-width:1080px;margin:auto;padding:18px 14px 40px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.brand{display:flex;align-items:center;gap:11px}.logo{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#1d5870,#453e91);box-shadow:0 0 25px #45d9ff22;font-size:23px}.brand h1{font-size:18px;margin:0;letter-spacing:.2px}.brand p{margin:3px 0 0;color:var(--muted);font-size:12px}.version{font-size:11px;color:var(--cyan);border:1px solid #347084;border-radius:99px;padding:6px 9px;white-space:nowrap}
-.banner{border:1px solid #856b2c;background:linear-gradient(110deg,#332914,#171d25);border-radius:14px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;margin-bottom:14px}.banner strong{color:var(--amber);font-size:13px}.banner p{margin:4px 0 0;font-size:12px;line-height:1.5;color:#f4e8c7}.banner .tag{font-size:10px;font-weight:800;letter-spacing:.8px;color:#1c1607;background:var(--amber);border-radius:5px;padding:4px 6px;white-space:nowrap}
-.grid{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}.panel{background:linear-gradient(145deg,#0d1e31ed,#091525f2);border:1px solid var(--line);border-radius:18px;padding:15px;box-shadow:0 12px 32px #0002;min-width:0}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}.panel h2{font-size:14px;margin:0;font-weight:750}.sub{font-size:11px;color:var(--muted);margin-top:4px}.pill{font-size:10px;padding:5px 8px;border-radius:99px;background:#14382f;border:1px solid #28694f;color:var(--green);white-space:nowrap}.pill.sim{background:#392c13;border-color:#6f5420;color:var(--amber)}
-.brain-area{display:grid;grid-template-columns:155px 1fr;gap:14px;align-items:center}.brain{height:160px;position:relative;display:grid;place-items:center}.orb{width:108px;height:108px;border-radius:50%;background:radial-gradient(circle at 35% 28%,#b6fbff 0,#4ac8ed 8%,#3766b8 33%,#171c56 63%,#07111f 75%);box-shadow:0 0 24px #3adfff66,inset -12px -12px 24px #050b23;position:relative;animation:pulse 3s ease-in-out infinite}.orb:before,.orb:after{content:"";position:absolute;inset:-13px;border:1px solid #53e6ff88;border-radius:50%;transform:rotateX(65deg);animation:spin 7s linear infinite}.orb:after{inset:-23px;border-color:#8d80ff70;transform:rotateY(67deg);animation-duration:10s}.orb span{position:absolute;inset:0;display:grid;place-items:center;font-size:32px;filter:drop-shadow(0 0 8px #9ff)}
-@keyframes pulse{0%,100%{transform:scale(.97);filter:hue-rotate(0)}50%{transform:scale(1.04);filter:hue-rotate(18deg)}}@keyframes spin{to{rotate:360deg}}
-.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.metric{padding:10px;border:1px solid #203d58;background:#0a1727;border-radius:12px}.metric .label{font-size:10px;color:var(--muted)}.metric .value{font-size:21px;font-weight:800;margin-top:4px;letter-spacing:-.6px}.metric .unit{font-size:10px;color:var(--muted);font-weight:500}.meter{height:4px;background:#1c3044;border-radius:99px;overflow:hidden;margin-top:8px}.meter span{display:block;height:100%;width:50%;background:linear-gradient(90deg,var(--cyan),var(--blue));border-radius:99px;transition:width .3s}
-.wave-wrap{height:180px;background:#071321;border:1px solid #1c344d;border-radius:12px;overflow:hidden;position:relative}.wave-wrap canvas{width:100%;height:100%;display:block}.wave-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}.legend{font-size:10px;color:var(--muted);display:flex;align-items:center;gap:5px}.dot{width:7px;height:7px;border-radius:50%}.wave-label{position:absolute;top:9px;left:10px;background:#071321c9;border:1px solid #1e3852;border-radius:6px;padding:4px 7px;color:var(--amber);font-size:10px}
-.bands{display:grid;gap:11px}.band-top{display:flex;justify-content:space-between;gap:8px;font-size:11px;margin-bottom:5px}.band-top span:first-child{font-weight:700}.band-top span:last-child{color:var(--muted);font-variant-numeric:tabular-nums}.bar{height:7px;border-radius:99px;background:#172a40;overflow:hidden}.bar span{display:block;height:100%;border-radius:99px;transition:width .35s}.explain{font-size:11px;color:var(--muted);line-height:1.55;margin:12px 0 0;padding-top:10px;border-top:1px solid #1d334b}
-.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.btn{appearance:none;border:1px solid #2b506d;background:#122a41;color:var(--text);border-radius:10px;padding:10px 12px;font-size:12px;font-weight:700;cursor:pointer}.btn.primary{background:linear-gradient(120deg,#1c879c,#4d58b6);border-color:#3eacc5}.btn:active{transform:scale(.98)}.btn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
-.statusline{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:11px;margin-top:10px}.statusdot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px #67f5bd77}.statusdot.paused{background:var(--amber);box-shadow:none}
-.log{display:grid;gap:8px}.logrow{display:flex;justify-content:space-between;gap:10px;padding:9px 10px;border-radius:9px;background:#0a1727;border:1px solid #1a3047;font-size:11px}.logrow span:last-child{color:var(--muted);font-variant-numeric:tabular-nums}.footer{text-align:center;color:#7890a9;font-size:10px;line-height:1.6;margin:18px 0 0}.footer strong{color:#c4d8e9}
-@media(max-width:720px){.grid{grid-template-columns:1fr}.brain-area{grid-template-columns:115px 1fr;gap:8px}.brain{height:135px}.orb{width:84px;height:84px}.orb span{font-size:25px}.orb:after{inset:-17px}.metric .value{font-size:19px}.panel{padding:13px}.wave-wrap{height:165px}.top{align-items:flex-start}.brand h1{font-size:16px}}
-@media(max-width:380px){.brain-area{grid-template-columns:1fr}.brain{height:110px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.version{font-size:10px}}
+:root{color-scheme:dark;--bg:#06101d;--panel:#0b1a2b;--line:#203b57;--cyan:#62e9ff;--blue:#8d8cff;--green:#67f5bd;--amber:#ffd166;--pink:#ff7bd5;--text:#edf7ff;--muted:#9db2c9}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 50% -10%,#153354 0,#071321 48%,#040a12 100%);font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);min-height:100vh}
+.wrap{max-width:1120px;margin:auto;padding:16px 13px 38px}.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}.brand{display:flex;align-items:center;gap:10px}.logo{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#1d5870,#453e91);box-shadow:0 0 25px #45d9ff22;font-size:23px}.brand h1{font-size:18px;margin:0;letter-spacing:.2px}.brand p{margin:3px 0 0;color:var(--muted);font-size:11px}.version{font-size:11px;color:var(--cyan);border:1px solid #347084;border-radius:99px;padding:6px 9px;white-space:nowrap}
+.notice{border:1px solid #856b2c;background:linear-gradient(110deg,#332914,#171d25);border-radius:14px;padding:12px 13px;display:flex;gap:9px;align-items:flex-start;margin-bottom:14px}.notice strong{color:var(--amber);font-size:13px}.notice p{margin:4px 0 0;font-size:12px;line-height:1.5;color:#f4e8c7}.tag{font-size:10px;font-weight:850;letter-spacing:.7px;color:#1c1607;background:var(--amber);border-radius:5px;padding:4px 6px;white-space:nowrap}
+.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:13px}.panel{background:linear-gradient(145deg,#0d1e31ed,#091525f2);border:1px solid var(--line);border-radius:17px;padding:14px;box-shadow:0 12px 32px #0002;min-width:0}.panel+.panel{margin-top:13px}.head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}.panel h2{font-size:14px;margin:0;font-weight:760}.sub{font-size:11px;color:var(--muted);margin-top:4px}.pill{font-size:10px;padding:5px 8px;border-radius:99px;background:#392c13;border:1px solid #6f5420;color:var(--amber);white-space:nowrap}.pill.ok{background:#14382f;border-color:#28694f;color:var(--green)}
+.overview{display:grid;grid-template-columns:128px 1fr;gap:10px;align-items:center}.brain{height:132px;position:relative;display:grid;place-items:center}.orb{width:82px;height:82px;border-radius:50%;background:radial-gradient(circle at 35% 28%,#b6fbff 0,#4ac8ed 8%,#3766b8 33%,#171c56 63%,#07111f 75%);box-shadow:0 0 24px #3adfff66,inset -12px -12px 24px #050b23;position:relative;animation:pulse 3s ease-in-out infinite}.orb:before,.orb:after{content:"";position:absolute;inset:-12px;border:1px solid #53e6ff88;border-radius:50%;transform:rotateX(65deg);animation:spin 7s linear infinite}.orb:after{inset:-20px;border-color:#8d80ff70;transform:rotateY(67deg);animation-duration:10s}.orb span{position:absolute;inset:0;display:grid;place-items:center;font-size:25px}
+@keyframes pulse{0%,100%{transform:scale(.97)}50%{transform:scale(1.04);filter:hue-rotate(18deg)}}@keyframes spin{to{rotate:360deg}}
+.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.metric{padding:9px;border:1px solid #203d58;background:#0a1727;border-radius:11px}.label{font-size:9px;color:var(--muted);letter-spacing:.3px}.value{font-size:20px;font-weight:820;margin-top:4px;letter-spacing:-.6px}.unit{font-size:10px;color:var(--muted);font-weight:500}.meter{height:4px;background:#1c3044;border-radius:99px;overflow:hidden;margin-top:7px}.meter span{display:block;height:100%;width:50%;background:linear-gradient(90deg,var(--cyan),var(--blue));border-radius:99px;transition:width .25s}
+.wave{height:188px;background:#071321;border:1px solid #1c344d;border-radius:11px;overflow:hidden;position:relative}.wave canvas{width:100%;height:100%;display:block}.wave-label{position:absolute;top:8px;left:8px;background:#071321d9;border:1px solid #1e3852;border-radius:6px;padding:4px 6px;color:var(--amber);font-size:9px}.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:9px}.leg{font-size:10px;color:var(--muted);display:flex;align-items:center;gap:5px}.dot{width:7px;height:7px;border-radius:50%}
+.controls{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.btn{appearance:none;border:1px solid #2b506d;background:#122a41;color:var(--text);border-radius:10px;padding:9px 11px;font-size:11px;font-weight:750;cursor:pointer;min-height:38px}.btn.primary{background:linear-gradient(120deg,#1c879c,#4d58b6);border-color:#3eacc5}.btn.active{border-color:var(--cyan);box-shadow:0 0 0 1px #62e9ff44}.btn:active{transform:scale(.98)}.btn:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.controlgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.control{background:#0a1727;border:1px solid #1a3047;border-radius:11px;padding:10px}.control label{display:flex;justify-content:space-between;gap:6px;font-size:11px;color:var(--muted);margin-bottom:8px}.control output{color:var(--cyan);font-variant-numeric:tabular-nums}.control input[type=range]{width:100%;accent-color:var(--cyan)}select{width:100%;background:#0a1727;color:var(--text);border:1px solid #2b506d;border-radius:9px;padding:10px;font-size:12px}
+.bands{display:grid;gap:11px}.bandtop{display:flex;justify-content:space-between;gap:8px;font-size:11px;margin-bottom:5px}.bandtop span:first-child{font-weight:750}.bandtop span:last-child{color:var(--muted);font-variant-numeric:tabular-nums}.bar{height:7px;border-radius:99px;background:#172a40;overflow:hidden}.bar span{display:block;height:100%;border-radius:99px;transition:width .3s}.note{font-size:11px;color:var(--muted);line-height:1.55;margin:11px 0 0;padding-top:10px;border-top:1px solid #1d334b}
+.historychart{height:145px;width:100%;display:block;background:#071321;border:1px solid #1c344d;border-radius:10px}.tablewrap{overflow:auto;margin-top:9px}.historytable{width:100%;border-collapse:collapse;font-size:10px;white-space:nowrap}.historytable th,.historytable td{text-align:left;padding:7px 6px;border-bottom:1px solid #1a3047}.historytable th{color:var(--muted);font-weight:600}.historytable td{font-variant-numeric:tabular-nums}
+.phone{max-width:250px;margin:0 auto;border:2px solid #42617b;border-radius:27px;padding:8px;background:#020811;box-shadow:0 8px 26px #0005}.phonescreen{min-height:270px;border-radius:19px;background:radial-gradient(circle at top,#173f60,#091323 66%);padding:14px 11px;overflow:hidden}.notch{width:64px;height:13px;background:#020811;border-radius:0 0 10px 10px;margin:-14px auto 13px}.phonebrand{text-align:center;font-size:10px;color:var(--cyan);letter-spacing:1px}.phoneclock{text-align:center;font-size:31px;font-weight:750;margin:13px 0 3px}.phonehint{text-align:center;color:var(--muted);font-size:10px;margin-bottom:13px}.appgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.app{border:1px solid #31506b;border-radius:12px;background:#10243a;color:var(--text);padding:11px 5px;font-size:11px;cursor:pointer;text-align:center}.app span{display:block;font-size:22px;margin-bottom:5px}.app:active{background:#1c4c68}.phonefeedback{text-align:center;font-size:10px;color:var(--green);min-height:28px;margin-top:11px}
+.log{display:grid;gap:7px}.logrow{display:flex;justify-content:space-between;gap:10px;padding:8px 9px;border-radius:9px;background:#0a1727;border:1px solid #1a3047;font-size:11px}.logrow span:last-child{color:var(--muted)}
+.footer{text-align:center;color:#7890a9;font-size:10px;line-height:1.6;margin:17px 0 0}.footer strong{color:#c4d8e9}
+@media(max-width:740px){.grid{grid-template-columns:1fr}.overview{grid-template-columns:110px 1fr}.brain{height:120px}.orb{width:75px;height:75px}.orb:after{inset:-17px}.panel{padding:12px}.wave{height:170px}.top{align-items:flex-start}.brand h1{font-size:16px}.phone{max-width:260px}}
+@media(max-width:370px){.overview{grid-template-columns:1fr}.brain{height:105px}.controlgrid{grid-template-columns:1fr}.version{font-size:9px}.value{font-size:18px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
 <main class="wrap">
-  <header class="top">
-    <div class="brand"><div class="logo" aria-hidden="true">🧠</div><div><h1>MindPhone BCI</h1><p>Neural Signal Lab · Dashboard</p></div></div>
-    <div class="version">VERSION 0.9</div>
-  </header>
+<header class="top"><div class="brand"><div class="logo" aria-hidden="true">🧠</div><div><h1>MindPhone BCI</h1><p>Neural Lab · Interactive Dashboard</p></div></div><div class="version">VERSION 1.0</div></header>
+<section class="notice" role="note"><span class="tag">SIMILASYON</span><div><strong>Demo sèlman — pa gen EEG reyèl ki konekte.</strong><p>Tout ond, mezi, bann frekans, nòt ak estatistik yo se done atifisyèl. Yo pa mezire sèvo ou, pa li panse, pa bay dyagnostik, epi yo pa reprezante eta mantal reyèl.</p></div></section>
 
-  <section class="banner" role="note" aria-label="Simulation notice">
-    <span class="tag">SIMILASYON</span>
-    <div><strong>Demo sèlman — pa gen EEG reyèl ki konekte.</strong><p>Ond, mezi, bann frekans ak endikatè yo se done atifisyèl pou demonstrasyon vizyèl. Sa pa li panse, pa bay dyagnostik, epi pa mezire aktivite sèvo ou an dirèk.</p></div>
-  </section>
+<div class="grid"><div>
+<section class="panel">
+<div class="head"><div><h2>Neural Activity Overview</h2><div class="sub">Siyal vizyèl k ap chanje an tan reyèl (simile)</div></div><span class="pill">MOCK DATA</span></div>
+<div class="overview"><div class="brain"><div class="orb"><span>🧠</span></div></div><div class="metrics">
+<div class="metric"><div class="label">SIGNAL LEVEL</div><div class="value" id="signalVal">64<span class="unit"> %</span></div><div class="meter"><span id="signalMeter" style="width:64%"></span></div></div>
+<div class="metric"><div class="label">FOCUS INDEX*</div><div class="value" id="focusVal">72<span class="unit"> %</span></div><div class="meter"><span id="focusMeter" style="width:72%"></span></div></div>
+<div class="metric"><div class="label">NOISE INDEX*</div><div class="value" id="noiseVal">12<span class="unit"> %</span></div><div class="meter"><span id="noiseMeter" style="width:12%;background:linear-gradient(90deg,#ffd166,#ff7b7b)"></span></div></div>
+<div class="metric"><div class="label">SAMPLE RATE*</div><div class="value" id="rateVal">256<span class="unit"> Hz</span></div><div class="sub">paramèt demonstrasyon</div></div>
+</div></div>
+<div class="sub" style="margin-top:10px">*Valè yo se paramèt demonstrasyon, se pa lekti EEG.</div>
+<div class="controls"><button class="btn primary" id="pauseBtn">⏸ Mete an poz</button><button class="btn" id="resetBtn">↻ Rekòmanse</button></div>
+<div class="sub" style="margin-top:9px"><span id="runStatus">● Similasyon ap kouri</span> · Sesyon <span id="elapsed">00:00</span></div>
+</section>
 
-  <div class="grid">
-    <div class="col">
-      <section class="panel">
-        <div class="panel-head"><div><h2>Neural Activity Overview</h2><div class="sub">Vizyalizasyon siyal ki ap chanje otomatikman</div></div><span class="pill sim">● MOCK DATA</span></div>
-        <div class="brain-area">
-          <div class="brain"><div class="orb"><span>🧠</span></div></div>
-          <div class="metrics">
-            <div class="metric"><div class="label">SIGNAL LEVEL</div><div class="value" id="signal">64<span class="unit"> %</span></div><div class="meter"><span id="signalMeter" style="width:64%"></span></div></div>
-            <div class="metric"><div class="label">SIMULATED FOCUS</div><div class="value" id="focus">72<span class="unit"> %</span></div><div class="meter"><span id="focusMeter" style="width:72%"></span></div></div>
-            <div class="metric"><div class="label">NOISE LEVEL</div><div class="value" id="noise">12<span class="unit"> %</span></div><div class="meter"><span id="noiseMeter" style="width:12%;background:linear-gradient(90deg,#ffd166,#ff7b7b)"></span></div></div>
-            <div class="metric"><div class="label">SAMPLE RATE</div><div class="value">256<span class="unit"> Hz*</span></div><div class="sub">valè demonstrasyon</div></div>
-          </div>
-        </div>
-        <div class="statusline"><span class="statusdot" id="statusDot"></span><span id="runStatus">Similasyon ap kouri</span><span>·</span><span id="clock">00:00</span></div>
-      </section>
+<section class="panel">
+<div class="head"><div><h2>EEG-Style Waveform</h2><div class="sub">Ond ilistratif; pa gen aparèy konekte</div></div><span class="pill">SIMULATED</span></div>
+<div class="wave"><canvas id="wave" aria-label="Ond siyal sèvo simile"></canvas><div class="wave-label">DEMO SIGNAL · NO EEG DEVICE</div></div>
+<div class="legend"><div class="leg"><span class="dot" style="background:#62e9ff"></span>Chanèl A</div><div class="leg"><span class="dot" style="background:#9a8cff"></span>Chanèl B</div><div class="leg"><span class="dot" style="background:#67f5bd"></span>Chanèl C</div></div>
+</section>
 
-      <section class="panel" style="margin-top:14px">
-        <div class="panel-head"><div><h2>EEG-Style Waveform</h2><div class="sub">Siyal ilistratif, pa anrejistreman reyèl</div></div><span class="pill sim">SIMULATED</span></div>
-        <div class="wave-wrap"><canvas id="wave" aria-label="Graf ond siyal sèvo simile"></canvas><div class="wave-label">DEMO SIGNAL · NO DEVICE</div></div>
-        <div class="wave-legend">
-          <div class="legend"><span class="dot" style="background:#62e9ff"></span>Chanèl A</div>
-          <div class="legend"><span class="dot" style="background:#9a8cff"></span>Chanèl B</div>
-          <div class="legend"><span class="dot" style="background:#67f5bd"></span>Chanèl C</div>
-        </div>
-        <div class="controls"><button class="btn primary" id="toggle">⏸ Mete an poz</button><button class="btn" id="refresh">↻ Nouvo modèl</button><button class="btn" id="export">⇩ Ekspòte demo JSON</button></div>
-      </section>
-    </div>
+<section class="panel">
+<div class="head"><div><h2>Waveform Controls</h2><div class="sub">Chanje fason ond simile yo parèt</div></div><span class="pill">LOCAL</span></div>
+<div class="controlgrid">
+<div class="control"><label for="speed">Vitès ond <output id="speedOut">1.0×</output></label><input id="speed" type="range" min="0.2" max="3" value="1" step="0.1"></div>
+<div class="control"><label for="amp">Anplitid <output id="ampOut">1.0×</output></label><input id="amp" type="range" min="0.3" max="2" value="1" step="0.1"></div>
+<div class="control"><label for="noiseControl">Bri vizyèl <output id="noiseOut">0.3×</output></label><input id="noiseControl" type="range" min="0" max="1" value="0.3" step="0.1"></div>
+<div class="control"><label for="mode">Mòd vizyalizasyon</label><select id="mode"><option value="lines">Liy</option><option value="glow">Liy lumineux</option><option value="dots">Pwen</option></select></div>
+</div>
+<div class="controls"><button class="btn" id="newModelBtn">🎲 Nouvo modèl done</button><button class="btn" id="exportBtn">⇩ Ekspòte JSON</button><button class="btn" id="clearHistoryBtn">🗑 Efase istorik</button></div>
+</section>
 
-    <div class="col">
-      <section class="panel">
-        <div class="panel-head"><div><h2>Frequency Bands</h2><div class="sub">Nivo fo nan done simulation yo</div></div><span class="pill sim">MOCK</span></div>
-        <div class="bands">
-          <div><div class="band-top"><span style="color:#62e9ff">Delta <small>(0.5–4 Hz)</small></span><span id="deltaNum">32%</span></div><div class="bar"><span id="deltaBar" style="width:32%;background:#62e9ff"></span></div></div>
-          <div><div class="band-top"><span style="color:#9a8cff">Theta <small>(4–8 Hz)</small></span><span id="thetaNum">48%</span></div><div class="bar"><span id="thetaBar" style="width:48%;background:#9a8cff"></span></div></div>
-          <div><div class="band-top"><span style="color:#67f5bd">Alpha <small>(8–13 Hz)</small></span><span id="alphaNum">67%</span></div><div class="bar"><span id="alphaBar" style="width:67%;background:#67f5bd"></span></div></div>
-          <div><div class="band-top"><span style="color:#ffd166">Beta <small>(13–30 Hz)</small></span><span id="betaNum">54%</span></div><div class="bar"><span id="betaBar" style="width:54%;background:#ffd166"></span></div></div>
-          <div><div class="band-top"><span style="color:#ff7bd5">Gamma <small>(30+ Hz)</small></span><span id="gammaNum">29%</span></div><div class="bar"><span id="gammaBar" style="width:29%;background:#ff7bd5"></span></div></div>
-        </div>
-        <p class="explain"><strong>Enpòtan:</strong> bann sa yo se valè o aza ki sèvi pou montre kijan yon dashboard ka parèt. Yo pa endike si ou kalm, konsantre, fatige, oswa nan nenpòt eta mantal reyèl.</p>
-      </section>
+<section class="panel">
+<div class="head"><div><h2>Session History</h2><div class="sub">Rezime done simile pandan sesyon sa a</div></div><span class="pill">SESSION ONLY</span></div>
+<canvas id="historyChart" class="historychart" aria-label="Graf istorik mezi simile"></canvas>
+<div class="tablewrap"><table class="historytable"><thead><tr><th>Lè</th><th>Siyal</th><th>Focus*</th><th>Bri*</th></tr></thead><tbody id="historyRows"><tr><td colspan="4">Ap rasanble pwen istorik simile…</td></tr></tbody></table></div>
+<p class="note">Istorik la egziste sèlman pandan paj sa a rete ouvè. Pa gen done reyèl ki anrejistre oswa voye ale.</p>
+</section>
+</div>
 
-      <section class="panel" style="margin-top:14px">
-        <div class="panel-head"><div><h2>Demo Diagnostics</h2><div class="sub">Eta sistèm demonstrasyon an</div></div><span class="pill">LOCAL</span></div>
-        <div class="log" id="log">
-          <div class="logrow"><span>EEG hardware</span><span>Pa konekte</span></div>
-          <div class="logrow"><span>Input source</span><span>Similatè lokal</span></div>
-          <div class="logrow"><span>Data transmission</span><span>Pa gen</span></div>
-          <div class="logrow"><span>Mind reading</span><span>Pa disponib</span></div>
-        </div>
-        <p class="explain">Pa gen okenn done ki soti nan sèvo ou. Paj sa a ap kouri nan navigatè a sèlman; li pa voye mezi bay yon sèvè.</p>
-      </section>
+<div>
+<section class="panel">
+<div class="head"><div><h2>Frequency Bands</h2><div class="sub">Valè atifisyèl pou demonstrasyon</div></div><span class="pill">MOCK</span></div>
+<div class="bands">
+<div><div class="bandtop"><span style="color:#62e9ff">Delta <small>0.5–4 Hz</small></span><span id="deltaNum">32%</span></div><div class="bar"><span id="deltaBar" style="width:32%;background:#62e9ff"></span></div></div>
+<div><div class="bandtop"><span style="color:#9a8cff">Theta <small>4–8 Hz</small></span><span id="thetaNum">48%</span></div><div class="bar"><span id="thetaBar" style="width:48%;background:#9a8cff"></span></div></div>
+<div><div class="bandtop"><span style="color:#67f5bd">Alpha <small>8–13 Hz</small></span><span id="alphaNum">67%</span></div><div class="bar"><span id="alphaBar" style="width:67%;background:#67f5bd"></span></div></div>
+<div><div class="bandtop"><span style="color:#ffd166">Beta <small>13–30 Hz</small></span><span id="betaNum">54%</span></div><div class="bar"><span id="betaBar" style="width:54%;background:#ffd166"></span></div></div>
+<div><div class="bandtop"><span style="color:#ff7bd5">Gamma <small>30+ Hz</small></span><span id="gammaNum">29%</span></div><div class="bar"><span id="gammaBar" style="width:29%;background:#ff7bd5"></span></div></div>
+</div>
+<p class="note"><strong>Pa entèprete valè sa yo kòm mezi medikal.</strong> Yo pa endike kalm, atansyon, dòmi oswa okenn eta mantal reyèl.</p>
+</section>
 
-      <section class="panel" style="margin-top:14px">
-        <div class="panel-head"><div><h2>About this demo</h2><div class="sub">MindPhone BCI · build 0.9</div></div></div>
-        <p style="font-size:12px;line-height:1.65;color:var(--muted);margin:0">Objektif la se aprann kijan yon entèfas BCI ta ka prezante siyal ak estatistik. Pou done reyèl, ta bezwen yon aparèy EEG konpatib, yon koneksyon apwopriye, epi lojisyèl pou trete siyal yo.</p>
-      </section>
-    </div>
-  </div>
-  <footer class="footer"><strong>MindPhone BCI v0.9</strong> · Entèfas eksperimantal pou aprantisaj<br>Tout mezi ki parèt sou paj sa a se SIMILASYON. Pa sèvi avè l pou desizyon medikal.</footer>
+<section class="panel">
+<div class="head"><div><h2>Virtual Phone</h2><div class="sub">Kòmand pou ekran demonstrasyon an sèlman</div></div><span class="pill">DEMO</span></div>
+<div class="phone"><div class="phonescreen"><div class="notch"></div><div class="phonebrand">MINDPHONE</div><div class="phoneclock" id="phoneClock">09:41</div><div class="phonehint" id="phoneHint">Chwazi yon aplikasyon vityèl</div><div class="appgrid">
+<button class="app" data-app="Home"><span>⌂</span>Home</button><button class="app" data-app="Music"><span>♫</span>Mizik</button><button class="app" data-app="Messages"><span>✉</span>Mesaj</button><button class="app" data-app="Focus"><span>◎</span>Focus</button>
+</div><div class="phonefeedback" id="phoneFeedback">Pa gen kòmand aktif</div></div></div>
+<p class="note">Bouton sa yo sèlman chanje mockup telefòn ki sou paj la. Yo pa kontwole iPhone a oswa lòt aplikasyon.</p>
+</section>
+
+<section class="panel">
+<div class="head"><div><h2>Demo Diagnostics</h2><div class="sub">Eta demonstrasyon an</div></div><span class="pill ok">LOCAL</span></div>
+<div class="log"><div class="logrow"><span>EEG hardware</span><span>Pa konekte</span></div><div class="logrow"><span>Data source</span><span>Similatè lokal</span></div><div class="logrow"><span>Network upload</span><span>Pa gen</span></div><div class="logrow"><span>Mind reading</span><span>Pa disponib</span></div></div>
+<p class="note">Pa gen done ki soti nan sèvo ou. Paj sa a trete demonstrasyon an lokalman nan navigatè a.</p>
+</section>
+
+<section class="panel">
+<div class="head"><div><h2>About v1.0</h2><div class="sub">BCI learning interface</div></div></div>
+<p style="font-size:12px;line-height:1.65;color:var(--muted);margin:0">BCI vle di Brain-Computer Interface. Pou resevwa done EEG reyèl, ta bezwen aparèy konpatib, pèmisyon aksè, yon koneksyon ki sipòte l, epi lojisyèl pou trete siyal yo. Vèsyon sa a se yon pwototip vizyèl.</p>
+</section>
+</div></div>
+<footer class="footer"><strong>MindPhone BCI v1.0</strong> · Single-file HTML · Mobile friendly<br>Tout siyal, nòt ak mezi yo se <strong>SIMILASYON</strong>. Pa sèvi avè l pou desizyon medikal.</footer>
 </main>
 <script>
 (() => {
-  const $ = id => document.getElementById(id);
-  const canvas = $('wave'), ctx = canvas.getContext('2d');
-  let running = true, start = Date.now(), elapsedBeforePause = 0, frame = 0, raf = 0;
-  let values = {signal:64,focus:72,noise:12,delta:32,theta:48,alpha:67,beta:54,gamma:29};
-  const bands = ['delta','theta','alpha','beta','gamma'];
-  function resizeCanvas(){
-    const r = canvas.getBoundingClientRect();
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.max(1, Math.floor(r.width*dpr));
-    canvas.height = Math.max(1, Math.floor(r.height*dpr));
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    draw();
-  }
-  function draw(){
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    if (!w || !h) return;
-    ctx.clearRect(0,0,w,h);
-    ctx.fillStyle = '#071321'; ctx.fillRect(0,0,w,h);
-    ctx.strokeStyle = '#17304a'; ctx.lineWidth = 1;
-    for(let x=0;x<w;x+=24){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke()}
-    for(let y=0;y<h;y+=24){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}
-    const colors = ['#62e9ff','#9a8cff','#67f5bd'];
-    const amp = [0.19,0.14,0.11];
-    for(let c=0;c<3;c++){
-      ctx.beginPath();
-      for(let x=0;x<=w;x+=2){
-        const t=x/w*Math.PI*13 + frame*0.055 + c*1.7;
-        const y=h*(0.31+c*0.19) + Math.sin(t)*h*amp[c]*0.52 + Math.sin(t*2.3+c)*h*0.025 + Math.sin(t*0.39+frame*.03)*h*.035;
-        if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
-      }
-      ctx.strokeStyle=colors[c];ctx.lineWidth=1.6;ctx.shadowBlur=7;ctx.shadowColor=colors[c];ctx.stroke();ctx.shadowBlur=0;
-    }
-  }
-  function setMeter(id,val){$(id).style.width = val+'%'}
-  function update(){
-    if(!running)return;
-    frame++;
-    values.signal = clamp(values.signal + rand(-5,5),25,98);
-    values.focus = clamp(values.focus + rand(-4,4),20,96);
-    values.noise = clamp(values.noise + rand(-3,3),3,35);
-    $('signal').innerHTML = values.signal+'<span class="unit"> %</span>';
-    $('focus').innerHTML = values.focus+'<span class="unit"> %</span>';
-    $('noise').innerHTML = values.noise+'<span class="unit"> %</span>';
-    setMeter('signalMeter',values.signal);setMeter('focusMeter',values.focus);setMeter('noiseMeter',values.noise);
-    bands.forEach(k=>{values[k]=clamp(values[k]+rand(-7,7),8,92);$(k+'Num').textContent=values[k]+'%';$(k+'Bar').style.width=values[k]+'%'});
-    draw();
-  }
-  function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
-  function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
-  function tickClock(){
-    const total = Math.floor((elapsedBeforePause + (running ? Date.now()-start : 0))/1000);
-    $('clock').textContent=String(Math.floor(total/60)).padStart(2,'0')+':'+String(total%60).padStart(2,'0');
-  }
-  function loop(){if(running){update();tickClock()}raf=requestAnimationFrame(loop)}
-  $('toggle').addEventListener('click',()=>{
-    if(running){running=false;elapsedBeforePause+=Date.now()-start;$('toggle').textContent='▶ Kontinye';$('runStatus').textContent='Similasyon an poz';$('statusDot').classList.add('paused')}
-    else{running=true;start=Date.now();$('toggle').textContent='⏸ Mete an poz';$('runStatus').textContent='Similasyon ap kouri';$('statusDot').classList.remove('paused')}
-  });
-  $('refresh').addEventListener('click',()=>{
-    values={signal:rand(45,85),focus:rand(45,85),noise:rand(5,20),delta:rand(20,75),theta:rand(20,75),alpha:rand(20,75),beta:rand(20,75),gamma:rand(20,75)};
-    $('runStatus').textContent=running?'Nouvo modèl simile kreye':'Nouvo modèl pare · an poz';
-    $('signal').innerHTML=values.signal+'<span class="unit"> %</span>';$('focus').innerHTML=values.focus+'<span class="unit"> %</span>';$('noise').innerHTML=values.noise+'<span class="unit"> %</span>';
-    setMeter('signalMeter',values.signal);setMeter('focusMeter',values.focus);setMeter('noiseMeter',values.noise);
-    bands.forEach(k=>{ $(k+'Num').textContent=values[k]+'%';$(k+'Bar').style.width=values[k]+'%' });draw();
-  });
-  $('export').addEventListener('click',()=>{
-    const data={app:'MindPhone BCI',version:'0.9',dataType:'SIMULATED DEMO DATA — NOT REAL EEG',hardwareConnected:false,timestamp:new Date().toISOString(),metrics:values,waveform:'Generated locally for visualization only'};
-    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-    const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='mindphone-bci-v0.9-demo.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
-    $('runStatus').textContent='Fichye JSON demo a pare pou ekspòte';
-  });
-  window.addEventListener('resize',resizeCanvas);
-  resizeCanvas(); loop();
+const $=id=>document.getElementById(id), wave=$('wave'), ctx=wave.getContext('2d'), hc=$('historyChart'), hctx=hc.getContext('2d');
+const bands=['delta','theta','alpha','beta','gamma'];
+const state={signal:64,focus:72,noise:12,delta:32,theta:48,alpha:67,beta:54,gamma:29};
+let running=true, frame=0, speed=1, amplitude=1, noiseAmount=.3, mode='lines', startTime=Date.now(), elapsedBase=0, lastSample=0, history=[];
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+function setMeter(id,v){$(id).style.width=v+'%'}
+function updateText(){
+$('signalVal').innerHTML=state.signal+'<span class="unit"> %</span>';$('focusVal').innerHTML=state.focus+'<span class="unit"> %</span>';$('noiseVal').innerHTML=state.noise+'<span class="unit"> %</span>';
+setMeter('signalMeter',state.signal);setMeter('focusMeter',state.focus);setMeter('noiseMeter',state.noise);
+bands.forEach(k=>{$(k+'Num').textContent=state[k]+'%';$(k+'Bar').style.width=state[k]+'%'});
+}
+function sample(){
+state.signal=clamp(state.signal+rand(-5,5),20,98);state.focus=clamp(state.focus+rand(-4,4),15,96);state.noise=clamp(state.noise+rand(-3,3),2,40);
+bands.forEach(k=>state[k]=clamp(state[k]+rand(-7,7),5,95));updateText();
+const elapsed=Math.floor((elapsedBase+(running?Date.now()-startTime:0))/1000);
+history.push({t:elapsed,signal:state.signal,focus:state.focus,noise:state.noise});if(history.length>48)history.shift();
+renderHistory();
+}
+function fitCanvas(c,context){
+const r=c.getBoundingClientRect(), dpr=Math.min(window.devicePixelRatio||1,2);
+c.width=Math.max(1,Math.floor(r.width*dpr));c.height=Math.max(1,Math.floor(r.height*dpr));context.setTransform(dpr,0,0,dpr,0,0);
+}
+function drawWave(){
+const w=wave.clientWidth,h=wave.clientHeight;if(!w||!h)return;ctx.clearRect(0,0,w,h);ctx.fillStyle='#071321';ctx.fillRect(0,0,w,h);
+ctx.strokeStyle='#17304a';ctx.lineWidth=1;for(let x=0;x<w;x+=24){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke()}for(let y=0;y<h;y+=24){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}
+const colors=['#62e9ff','#9a8cff','#67f5bd'],amp=[.19,.14,.11];
+for(let c=0;c<3;c++){
+ctx.beginPath();let first=true;
+for(let x=0;x<=w;x+=2){
+const t=x/w*Math.PI*13+frame*.055*speed+c*1.7;
+const randomJitter=(Math.sin(x*1.31+frame*1.7+c*11)+Math.sin(x*.39+frame*.7))*noiseAmount*h*.012;
+const y=h*(.31+c*.19)+(Math.sin(t)*h*amp[c]*.52*amplitude)+(Math.sin(t*2.3+c)*h*.025*amplitude)+(Math.sin(t*.39+frame*.03)*h*.035)+randomJitter;
+if(first){ctx.moveTo(x,y);first=false}else ctx.lineTo(x,y);
+}
+ctx.strokeStyle=colors[c];ctx.lineWidth=mode==='dots'?1:1.55;
+if(mode==='glow'){ctx.shadowBlur=8;ctx.shadowColor=colors[c]}else ctx.shadowBlur=0;
+ctx.stroke();ctx.shadowBlur=0;
+if(mode==='dots'){for(let x=0;x<w;x+=13){const t=x/w*Math.PI*13+frame*.055*speed+c*1.7;const y=h*(.31+c*.19)+Math.sin(t)*h*amp[c]*.52*amplitude+Math.sin(t*2.3+c)*h*.025*amplitude;ctx.fillStyle=colors[c];ctx.beginPath();ctx.arc(x,y,1.7,0,Math.PI*2);ctx.fill()}}
+}
+}
+function renderHistory(){
+const w=hc.clientWidth,h=hc.clientHeight;if(!w||!h)return;hctx.clearRect(0,0,w,h);hctx.fillStyle='#071321';hctx.fillRect(0,0,w,h);
+hctx.strokeStyle='#17304a';hctx.lineWidth=1;for(let x=0;x<w;x+=30){hctx.beginPath();hctx.moveTo(x,0);hctx.lineTo(x,h);hctx.stroke()}for(let y=0;y<h;y+=29){hctx.beginPath();hctx.moveTo(0,y);hctx.lineTo(w,y);hctx.stroke()}
+if(!history.length){hctx.fillStyle='#9db2c9';hctx.font='12px system-ui';hctx.fillText('Istorik la ap tann premye echantiyon an…',10,h/2);return}
+const series=[['signal','#62e9ff'],['focus','#9a8cff'],['noise','#ffd166']];
+series.forEach(([key,color])=>{hctx.beginPath();history.forEach((p,i)=>{const x=history.length===1?0:i/(history.length-1)*w,y=h-(p[key]/100)*(h-14)-7;if(i===0)hctx.moveTo(x,y);else hctx.lineTo(x,y)});hctx.strokeStyle=color;hctx.lineWidth=1.7;hctx.stroke()});
+const rows=$('historyRows');rows.innerHTML='';history.slice(-6).reverse().forEach(p=>{const tr=document.createElement('tr');const mins=String(Math.floor(p.t/60)).padStart(2,'0'),secs=String(p.t%60).padStart(2,'0');[mins+':'+secs,p.signal+'%',p.focus+'%',p.noise+'%'].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.appendChild(td)});rows.appendChild(tr)});
+}
+function elapsedSeconds(){return Math.floor((elapsedBase+(running?Date.now()-startTime:0))/1000)}
+function updateClock(){const t=elapsedSeconds();$('elapsed').textContent=String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0')}
+function loop(){if(running){frame++;drawWave();if(Date.now()-lastSample>1200){sample();lastSample=Date.now()}updateClock()}requestAnimationFrame(loop)}
+function resize(){fitCanvas(wave,ctx);fitCanvas(hc,hctx);drawWave();renderHistory()}
+$('pauseBtn').addEventListener('click',()=>{if(running){running=false;elapsedBase+=Date.now()-startTime;$('pauseBtn').textContent='▶ Kontinye';$('runStatus').textContent='Ⅱ Similasyon an poz'}else{running=true;startTime=Date.now();$('pauseBtn').textContent='⏸ Mete an poz';$('runStatus').textContent='● Similasyon ap kouri'}});
+$('resetBtn').addEventListener('click',()=>{running=true;frame=0;elapsedBase=0;startTime=Date.now();lastSample=0;history=[];Object.assign(state,{signal:64,focus:72,noise:12,delta:32,theta:48,alpha:67,beta:54,gamma:29});$('pauseBtn').textContent='⏸ Mete an poz';$('runStatus').textContent='● Nouvo sesyon simile';updateText();renderHistory();updateClock()});
+$('speed').addEventListener('input',e=>{speed=Number(e.target.value);$('speedOut').textContent=speed.toFixed(1)+'×'});
+$('amp').addEventListener('input',e=>{amplitude=Number(e.target.value);$('ampOut').textContent=amplitude.toFixed(1)+'×'});
+$('noiseControl').addEventListener('input',e=>{noiseAmount=Number(e.target.value);$('noiseOut').textContent=noiseAmount.toFixed(1)+'×'});
+$('mode').addEventListener('change',e=>{mode=e.target.value;drawWave()});
+$('newModelBtn').addEventListener('click',()=>{Object.keys(state).forEach(k=>state[k]=rand(15,85));updateText();$('runStatus').textContent=running?'● Nouvo modèl simile':'Ⅱ Nouvo modèl pare · an poz';drawWave()});
+$('clearHistoryBtn').addEventListener('click',()=>{history=[];renderHistory();$('runStatus').textContent='Istorik sesyon an efase'});
+$('exportBtn').addEventListener('click',()=>{
+const payload={app:'MindPhone BCI',version:'1.0',notice:'SIMULATED DATA ONLY — NOT REAL EEG',hardwareConnected:false,exportedAt:new Date().toISOString(),settings:{speed,amplitude,noiseAmount,mode},currentMetrics:{...state},history:history.map(p=>({...p})),phoneDemoOnly:true};
+const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='mindphone-bci-v1.0-simulation.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1200);$('runStatus').textContent='JSON demonstrasyon an ekspòte';
+});
+document.querySelectorAll('[data-app]').forEach(b=>b.addEventListener('click',()=>{const app=b.dataset.app;$('phoneHint').textContent=app==='Home'?'Ekran lakay vityèl':app==='Music'?'Jwe mizik se yon demonstrasyon':app==='Messages'?'Mesaj vityèl — pa voye okenn mesaj': 'Mòd focus vityèl';$('phoneFeedback').textContent='Kòmand '+app+' aktive nan demo a';}));
+function phoneTime(){const d=new Date();$('phoneClock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+window.addEventListener('resize',resize);fitCanvas(wave,ctx);fitCanvas(hc,hctx);phoneTime();updateText();renderHistory();loop();
 })();
 </script>
 </body>
