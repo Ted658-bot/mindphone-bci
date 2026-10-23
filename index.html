@@ -1,352 +1,709 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ht">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#080b18">
-<title>MindPhone BCI 0.6</title>
+<meta name="theme-color" content="#070b18">
+<title>MindPhone BCI 0.7</title>
 <style>
-:root{
-  --bg:#080b18;--panel:#11172b;--line:#283252;
-  --cyan:#51f6ff;--purple:#a78bfa;--green:#50fa9b;
-  --text:#eef3ff;--muted:#9aa8c8;--red:#ff6b8a;
+:root {
+  --bg:#070b18;
+  --panel:#10182b;
+  --panel2:#0b1222;
+  --line:#243653;
+  --cyan:#50f5ff;
+  --blue:#7187ff;
+  --purple:#bd72ff;
+  --green:#6cffb0;
+  --red:#ff6b8a;
+  --muted:#91a2c3;
+  --white:#eef6ff;
 }
-*{box-sizing:border-box}
-body{
-  margin:0;background:radial-gradient(ellipse at top,#19244b 0,#080b18 55%);
-  color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  margin:0;
+  min-height:100vh;
+  color:var(--white);
+  background:
+    radial-gradient(ellipse at 50% -10%,#182f58 0%,transparent 45%),
+    var(--bg);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  padding:env(safe-area-inset-top) 14px env(safe-area-inset-bottom);
 }
-header{padding:22px 16px 12px;text-align:center}
-.logo{font-size:12px;letter-spacing:4px;color:var(--cyan);font-weight:800}
-h1{font-size:27px;margin:8px 0}
-.subtitle{font-size:12px;color:var(--muted)}
-main{max-width:760px;margin:auto;padding:10px 13px 35px}
-.panel{
-  background:linear-gradient(145deg,rgba(22,30,58,.96),rgba(12,17,36,.97));
-  border:1px solid var(--line);border-radius:19px;padding:16px;
-  margin-bottom:14px;box-shadow:0 10px 35px #0003;
+button { font:inherit; -webkit-tap-highlight-color:transparent; }
+button:focus-visible { outline:2px solid var(--cyan); outline-offset:3px; }
+.app { max-width:920px; margin:auto; padding:16px 0 32px; }
+.topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.brand { display:flex; align-items:center; gap:11px; }
+.logo {
+  width:46px;height:46px;border:1px solid #397d9a;border-radius:15px;
+  display:grid;place-items:center;font-size:25px;
+  background:linear-gradient(145deg,#183650,#11122d);
+  box-shadow:0 0 25px #42eaff20;
 }
-.section-title{font-size:13px;font-weight:800;letter-spacing:1px;margin-bottom:12px}
-.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.status{font-size:11px;color:var(--green);font-weight:800}
-.brain-stage{
-  min-height:235px;display:grid;place-items:center;position:relative;
-  overflow:hidden;border-radius:16px;
-  background:radial-gradient(ellipse,#1a2450 0,#0b1026 58%,#090d1d 100%);
+h1 { font-size:20px; margin:0; letter-spacing:.3px; }
+.subtitle { color:var(--muted); font-size:11px; margin-top:4px; }
+.version {
+  font-size:11px; padding:7px 10px; border:1px solid #35516e;
+  color:var(--cyan); border-radius:20px; white-space:nowrap;
 }
-.brain-stage:before,.brain-stage:after{
-  content:"";position:absolute;width:190px;height:190px;border-radius:50%;
-  border:1px solid #51f6ff35;animation:pulse 3s ease-in-out infinite;
+.statusline { display:flex; align-items:center; gap:7px; color:var(--muted); font-size:12px; margin:16px 2px; }
+.dot { width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 10px var(--green); }
+.hero {
+  position:relative; overflow:hidden; text-align:center; padding:20px 12px 18px;
+  background:linear-gradient(180deg,#101a31dd,#0a1020ee);
+  border:1px solid var(--line); border-radius:24px;
 }
-.brain-stage:after{width:225px;height:225px;animation-delay:1.2s}
-@keyframes pulse{0%,100%{transform:scale(.85);opacity:.25}50%{transform:scale(1.12);opacity:.8}}
-.brain{width:170px;height:155px;position:relative;z-index:1;animation:float 3s ease-in-out infinite}
-@keyframes float{0%,100%{transform:translateY(2px) rotate(-2deg)}50%{transform:translateY(-7px) rotate(2deg)}}
-.brain svg{width:100%;height:100%;filter:drop-shadow(0 0 12px #51f6ff70)}
-.brain-path{fill:#182e5a;stroke:var(--cyan);stroke-width:2.2;stroke-linejoin:round}
-.brain-line{fill:none;stroke:#a78bfa;stroke-width:1.5;stroke-linecap:round}
-.brain-dot{fill:#fff;filter:drop-shadow(0 0 5px var(--cyan))}
-.scan{
-  position:absolute;z-index:2;width:100%;height:2px;
-  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
-  box-shadow:0 0 15px var(--cyan);animation:scan 3.5s linear infinite;
+.hero:before {
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 40%,#386cff12,transparent 60%);
 }
-@keyframes scan{from{top:0}to{top:100%}}
-.brain-label{position:absolute;bottom:10px;font-size:10px;color:var(--cyan);letter-spacing:2px}
-.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
-.metric{background:#080d20;border:1px solid #283252;border-radius:12px;padding:11px 7px;text-align:center}
-.metric strong{display:block;font-size:19px;color:var(--cyan)}
-.metric span{font-size:10px;color:var(--muted)}
-canvas{width:100%;height:115px;display:block;background:#090e20;border-radius:12px}
-.bands{display:grid;gap:12px}
-.band{display:grid;grid-template-columns:65px 1fr 38px;align-items:center;gap:8px;font-size:11px}
-.track{height:7px;background:#252d48;border-radius:10px;overflow:hidden}
-.fill{height:100%;width:20%;border-radius:10px;transition:width .35s}
-.alpha{background:#51f6ff}.beta{background:#a78bfa}
-.theta{background:#50fa9b}.delta{background:#ffbd69}
-.buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-button{
-  border:1px solid #344264;border-radius:12px;padding:12px 8px;
-  background:#171f3b;color:var(--text);font-size:12px;font-weight:750;
-  cursor:pointer;touch-action:manipulation;
+.brain {
+  position:relative;width:174px;height:174px;margin:0 auto 4px;
+  display:grid;place-items:center;
 }
-button:active{transform:scale(.97)}
-button.primary{background:linear-gradient(110deg,#176b82,#4941a5);border-color:#51f6ff80}
-button.stop{background:#35192d;border-color:#8a3458}
-button:disabled{opacity:.4}
-.phone{
-  max-width:300px;margin:0 auto;padding:10px;border-radius:31px;
-  background:#05070d;border:2px solid #53607b;
-  box-shadow:0 0 0 3px #141c33,0 15px 35px #0006;
+.brain .ring {
+  position:absolute;inset:8px;border:1px solid #50f5ff45;border-radius:50%;
+  animation:spin 12s linear infinite;
 }
-.phone-top{height:18px;display:flex;justify-content:center}
-.notch{width:85px;height:13px;background:#03050a;border-radius:0 0 12px 12px}
-.phone-screen{
-  min-height:275px;border-radius:21px;padding:15px 12px;
-  background:linear-gradient(160deg,#172b53,#10142d 70%,#24153f);
-  overflow:hidden;
+.brain .ring:before,.brain .ring:after {
+  content:"";position:absolute;width:7px;height:7px;border-radius:50%;
+  background:var(--cyan);box-shadow:0 0 13px var(--cyan);
 }
-.phone-time{font-size:12px;color:#c9d6ff}
-.phone-clock{font-size:38px;font-weight:300;margin:10px 0 2px}
-.phone-date{font-size:11px;color:#b8c8f4}
-.phone-card{padding:12px;margin-top:12px;background:#ffffff12;border:1px solid #ffffff20;border-radius:13px}
-.phone-card h3{margin:0 0 6px;font-size:13px}
-.phone-card p{font-size:11px;line-height:1.5;color:#c9d6ff;margin:0}
-.phone-apps{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}
-.app{
-  padding:12px 2px;border-radius:12px;background:#ffffff10;
-  text-align:center;font-size:10px;border:1px solid #ffffff16;
+.brain .ring:before { left:22px;top:13px; }
+.brain .ring:after { right:4px;bottom:42px;background:var(--purple); }
+.brain .ring.two { inset:22px;border-color:#bd72ff65;animation:spin 9s linear infinite reverse; }
+.brain .ring.three { inset:37px;border-style:dashed;border-color:#50f5ff55;animation-duration:18s; }
+.brain-icon {
+  font-size:72px;filter:drop-shadow(0 0 16px #50f5ff70);
+  animation:pulse 2.4s ease-in-out infinite;
 }
-.app span{display:block;font-size:22px;margin-bottom:5px}
-.phone-nav{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:10px}
-.phone-nav button{padding:9px 2px;font-size:10px;background:#ffffff10;border-color:#ffffff20}
-.log{max-height:150px;overflow:auto;font-size:11px;line-height:1.8;color:#bdc8e4}
-.log div{border-bottom:1px solid #ffffff0b;padding:4px 0}
-.log b{color:var(--cyan)}
-.note{font-size:11px;line-height:1.6;color:var(--muted)}
-.footer{text-align:center;font-size:10px;color:#7483a6;padding:12px}
-@media(min-width:620px){.columns{display:grid;grid-template-columns:1fr 1fr;gap:12px}.columns .panel{margin-bottom:14px}}
+.brain-label { font-size:10px;letter-spacing:3px;color:var(--cyan); }
+.hero h2 { font-size:20px;margin:8px 0 5px; }
+.hero p { color:var(--muted);font-size:12px;margin:0;line-height:1.6; }
+.chips { display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin-top:14px; }
+.chip { border:1px solid #2b4660;border-radius:20px;padding:6px 9px;font-size:10px;color:#c5d7f6;background:#0a1324; }
+.grid { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px; }
+.panel { min-width:0;background:linear-gradient(145deg,#10192b,#0b1221);border:1px solid var(--line);border-radius:18px;padding:14px; }
+.panel.wide { grid-column:1/-1; }
+.section-head { display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px; }
+.section-head h3 { margin:0;font-size:13px;letter-spacing:.3px; }
+.small { color:var(--muted);font-size:10px; }
+.signal-value { color:var(--cyan);font-size:25px;font-weight:750; }
+.signal-note { color:var(--muted);font-size:10px;margin-top:3px; }
+canvas { width:100%;display:block; }
+#eeg { height:100px; }
+.bands { display:grid;gap:10px;margin-top:13px; }
+.band-row { display:grid;grid-template-columns:52px 1fr 35px;gap:8px;align-items:center;font-size:10px;color:#c6d4ed; }
+.track { height:6px;background:#1a2941;border-radius:10px;overflow:hidden; }
+.fill { height:100%;width:0;border-radius:10px;transition:width .5s; }
+.metric-grid { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px; }
+.metric { padding:12px;background:#0a1221;border:1px solid #1f3049;border-radius:13px; }
+.metric-label { color:var(--muted);font-size:10px; }
+.metric-number { font-size:22px;font-weight:750;margin-top:6px; }
+.metric-number.cyan { color:var(--cyan); }
+.metric-number.purple { color:var(--purple); }
+.metric-number.green { color:var(--green); }
+.confidence { height:7px;background:#1a2941;border-radius:8px;margin-top:9px;overflow:hidden; }
+.confidence div { height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width .4s; }
+.actions { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px; }
+.action {
+  min-height:72px;border:1px solid #293d5b;border-radius:14px;
+  background:linear-gradient(145deg,#14223a,#0c1425);color:var(--white);
+  padding:10px 5px;cursor:pointer;transition:transform .15s,border-color .15s;
+}
+.action:active { transform:scale(.96);border-color:var(--cyan); }
+.action .emoji { font-size:23px;display:block;margin-bottom:7px; }
+.action .name { font-size:11px;font-weight:650; }
+.action .desc { display:block;font-size:9px;color:var(--muted);margin-top:4px; }
+.primary {
+  width:100%;border:0;border-radius:13px;padding:13px 12px;
+  color:#06101b;background:linear-gradient(100deg,var(--cyan),#9ffcff);
+  font-weight:750;cursor:pointer;
+}
+.secondary {
+  border:1px solid #344965;border-radius:12px;padding:11px;
+  background:#111d31;color:var(--white);font-weight:650;cursor:pointer;
+}
+.button-row { display:flex;gap:8px;margin-top:10px; }
+.button-row>* { flex:1;min-width:0; }
+.voice-status { font-size:11px;color:var(--muted);line-height:1.6;margin:10px 0; }
+.voice-status strong { color:var(--cyan); }
+#gesturePad {
+  height:100px;border:1px dashed #426280;border-radius:14px;
+  background:radial-gradient(ellipse at center,#18304b66,transparent);
+  display:grid;place-items:center;text-align:center;color:var(--muted);
+  font-size:11px;touch-action:pan-y;user-select:none;-webkit-user-select:none;
+}
+#gesturePad.active { border-color:var(--cyan);background:#14314a66; }
+.phone {
+  max-width:280px;margin:0 auto;padding:9px;border-radius:28px;
+  border:2px solid #3b4b68;background:#050812;
+  box-shadow:0 0 26px #547aff12;
+}
+.phone-screen {
+  overflow:hidden;min-height:290px;border-radius:20px;
+  background:linear-gradient(155deg,#16294b,#10152b 55%,#0b1121);
+  padding:17px 13px;
+}
+.phone-top { display:flex;justify-content:space-between;font-size:10px;color:#d8e8ff; }
+.phone-clock { font-size:37px;font-weight:300;text-align:center;margin-top:23px; }
+.phone-date { text-align:center;font-size:10px;color:#a7b9d9;margin-top:3px; }
+.phone-widget { margin-top:22px;padding:12px;border-radius:15px;background:#ffffff0b;border:1px solid #ffffff14; }
+.phone-widget b { font-size:12px; }
+.phone-widget p { color:#afc0dd;font-size:10px;line-height:1.6;margin:6px 0 0; }
+.phone-apps { display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:15px;text-align:center; }
+.phone-apps div { font-size:21px; }
+.phone-apps span { display:block;font-size:9px;color:#bfcee5;margin-top:5px; }
+.log { max-height:200px;overflow:auto;display:grid;gap:7px; }
+.log-entry { display:grid;grid-template-columns:50px 1fr;gap:8px;padding:8px;background:#0a1220;border-radius:9px;font-size:10px;line-height:1.5; }
+.log-time { color:var(--cyan);font-variant-numeric:tabular-nums; }
+.log-message { color:#c8d6ed;overflow-wrap:anywhere; }
+.log-message small { display:block;color:var(--muted);margin-top:2px; }
+.disclaimer { margin-top:14px;border:1px solid #66512d;background:#241d12;border-radius:14px;padding:12px;color:#e9d6a8;font-size:11px;line-height:1.65; }
+footer { text-align:center;color:#647693;font-size:10px;padding:18px 0 4px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+@keyframes pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.08); } }
+@media(min-width:650px) {
+  .grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .hero { padding:24px; }
+  .brain { width:190px;height:190px; }
+  .actions { grid-template-columns:repeat(5,minmax(0,1fr)); }
+}
+@media(max-width:360px) {
+  body { padding-left:9px;padding-right:9px; }
+  .panel { padding:11px; }
+  h1 { font-size:17px; }
+  .version { font-size:9px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  *,*:before,*:after { animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important; }
+}
 </style>
 </head>
 <body>
-<header>
-  <div class="logo">NEURAL INTERFACE LAB</div>
-  <h1>🧠 MindPhone BCI <span style="color:#51f6ff">0.6</span></h1>
-  <div class="subtitle">BRAIN SIGNAL SIMULATOR · FUTURE PHONE INTERFACE</div>
-</header>
-
-<main>
-<section class="panel">
-  <div class="row">
-    <div class="section-title">01 / NEURAL CORE</div>
-    <div class="status" id="systemStatus">● SIMULATION ACTIVE</div>
-  </div>
-  <div class="brain-stage">
-    <div class="scan"></div>
-    <div class="brain">
-      <svg viewBox="0 0 200 175" aria-label="Sèvo futuris anime">
-        <path class="brain-path" d="M98 29 C83 7 56 16 53 36 C29 31 20 56 31 72 C13 88 25 113 43 117 C42 139 64 148 80 136 C86 151 98 151 100 139 L100 36 Z"/>
-        <path class="brain-path" d="M102 29 C117 7 144 16 147 36 C171 31 180 56 169 72 C187 88 175 113 157 117 C158 139 136 148 120 136 C114 151 102 151 100 139 L100 36 Z"/>
-        <path class="brain-line" d="M45 49 Q67 40 78 62 T95 84 M31 79 Q54 68 66 91 T95 112 M44 113 Q65 101 78 125 M60 31 Q82 43 71 57 M88 26 Q97 44 83 51"/>
-        <path class="brain-line" d="M155 49 Q133 40 122 62 T105 84 M169 79 Q146 68 134 91 T105 112 M156 113 Q135 101 122 125 M140 31 Q118 43 129 57 M112 26 Q103 44 117 51"/>
-        <path class="brain-line" d="M100 37 L100 138"/>
-        <circle class="brain-dot" cx="65" cy="59" r="3"/>
-        <circle class="brain-dot" cx="139" cy="77" r="3"/>
-        <circle class="brain-dot" cx="78" cy="115" r="2.5"/>
-        <circle class="brain-dot" cx="124" cy="47" r="2.5"/>
-      </svg>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">🧠</div>
+      <div>
+        <h1>MindPhone BCI</h1>
+        <div class="subtitle">NEURAL INTERFACE LAB · MOBILE DEMO</div>
+      </div>
     </div>
-    <div class="brain-label">NEURAL FIELD // SIMULATED</div>
-  </div>
-  <div class="metrics">
-    <div class="metric"><strong id="focus">78%</strong><span>FOCUS SIM.</span></div>
-    <div class="metric"><strong id="signal">94%</strong><span>SIGNAL QUALITY</span></div>
-    <div class="metric"><strong id="commands">0</strong><span>COMMANDS</span></div>
-  </div>
-</section>
+    <div class="version">VERSION 0.7</div>
+  </header>
 
-<div class="columns">
-<section class="panel">
-  <div class="row"><div class="section-title">02 / EEG WAVEFORM</div><span class="status">LIVE*</span></div>
-  <canvas id="eeg"></canvas>
-  <p class="note">*Graf la se yon siyal atifisyèl ki ap anime, se pa mezi sèvo reyèl.</p>
-</section>
+  <div class="statusline">
+    <span class="dot"></span>
+    <span id="systemStatus">Demo aktif · simulation</span>
+  </div>
 
-<section class="panel">
-  <div class="section-title">03 / SIGNAL ANALYZER</div>
-  <div class="bands">
-    <div class="band"><span>Alpha</span><div class="track"><div id="alpha" class="fill alpha"></div></div><b id="alphaN">62%</b></div>
-    <div class="band"><span>Beta</span><div class="track"><div id="beta" class="fill beta"></div></div><b id="betaN">44%</b></div>
-    <div class="band"><span>Theta</span><div class="track"><div id="theta" class="fill theta"></div></div><b id="thetaN">31%</b></div>
-    <div class="band"><span>Delta</span><div class="track"><div id="delta" class="fill delta"></div></div><b id="deltaN">18%</b></div>
+  <section class="hero">
+    <div class="brain" aria-label="Animasyon sèvo simulation">
+      <div class="ring"></div><div class="ring two"></div><div class="ring three"></div>
+      <div class="brain-icon">🧠</div>
+    </div>
+    <div class="brain-label">MINDPHONE NEURAL CORE</div>
+    <h2>Think beyond the screen.</h2>
+    <p>Yon laboratwa entèaktif pou eksplore<br>entèfas sèvo-ak-òdinatè.</p>
+    <div class="chips">
+      <span class="chip">● EEG SIMULATED</span>
+      <span class="chip">✦ VOICE CONTROL</span>
+      <span class="chip">↔ TOUCH GESTURES</span>
+    </div>
+  </section>
+
+  <main class="grid">
+    <section class="panel wide">
+      <div class="section-head">
+        <h3>〰 LIVE SIGNAL MONITOR</h3>
+        <span class="small" id="signalState">SIMULATED</span>
+      </div>
+      <div class="signal-value"><span id="signalValue">42.8</span><span style="font-size:12px"> µV*</span></div>
+      <div class="signal-note">Valè demonstrasyon · pa yon mezi medikal</div>
+      <canvas id="eeg" aria-label="Graf vag EEG simulation"></canvas>
+      <div class="bands">
+        <div class="band-row"><span>Alpha</span><div class="track"><div class="fill" id="alphaFill" style="background:#50f5ff"></div></div><span id="alphaVal">--%</span></div>
+        <div class="band-row"><span>Beta</span><div class="track"><div class="fill" id="betaFill" style="background:#7187ff"></div></div><span id="betaVal">--%</span></div>
+        <div class="band-row"><span>Theta</span><div class="track"><div class="fill" id="thetaFill" style="background:#bd72ff"></div></div><span id="thetaVal">--%</span></div>
+        <div class="band-row"><span>Delta</span><div class="track"><div class="fill" id="deltaFill" style="background:#6cffb0"></div></div><span id="deltaVal">--%</span></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head"><h3>📊 ANALYTICS</h3><span class="small">LIVE DEMO</span></div>
+      <div class="metric-grid">
+        <div class="metric"><div class="metric-label">Signal quality*</div><div class="metric-number cyan" id="quality">94%</div></div>
+        <div class="metric"><div class="metric-label">Class confidence*</div><div class="metric-number purple" id="confidenceText">82%</div></div>
+        <div class="metric"><div class="metric-label">Kòmand yo</div><div class="metric-number green" id="commandCount">0</div></div>
+        <div class="metric"><div class="metric-label">Tan demo</div><div class="metric-number" id="elapsed">00:00</div></div>
+      </div>
+      <div class="small" style="margin-top:12px">Konfyans klasifikatè demonstrasyon</div>
+      <div class="confidence"><div id="confidenceBar"></div></div>
+      <div class="small" style="margin-top:8px">*Tout valè yo se simulation.</div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head"><h3>🧭 PATTERN CLASSIFIER</h3><span class="small">MOCK AI</span></div>
+      <div class="metric-label">Modèl aktyèl</div>
+      <div id="pattern" style="font-size:21px;font-weight:750;color:var(--cyan);margin:8px 0">Relaxation</div>
+      <p id="patternDescription" class="small" style="line-height:1.7">Sistèm nan ap jenere yon modèl demonstrasyon.</p>
+      <button class="secondary" id="classifyBtn" style="width:100%;margin-top:12px">Teste klasifikatè a</button>
+    </section>
+
+    <section class="panel wide">
+      <div class="section-head"><h3>📱 VIRTUAL PHONE</h3><span class="small" id="phoneState">HOME</span></div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-top"><span>MindPhone Demo</span><span>◉ ▰ 100%</span></div>
+          <div class="phone-clock" id="phoneClock">00:00</div>
+          <div class="phone-date" id="phoneDate">Neural interface lab</div>
+          <div class="phone-widget">
+            <b id="phoneTitle">🏠 Home</b>
+            <p id="phoneMessage">Byenveni nan telefòn vityèl MindPhone BCI 0.7 la.</p>
+          </div>
+          <div class="phone-apps">
+            <div>🏠<span>Home</span></div>
+            <div>🎵<span>Music</span></div>
+            <div>💬<span>Messages</span></div>
+            <div>🧘<span>Focus</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel wide">
+      <div class="section-head"><h3>⚡ QUICK COMMANDS</h3><span class="small">VIRTUAL ONLY</span></div>
+      <div class="actions">
+        <button class="action" data-command="home"><span class="emoji">🏠</span><span class="name">Home</span><span class="desc">Ekran prensipal</span></button>
+        <button class="action" data-command="music"><span class="emoji">🎵</span><span class="name">Music</span><span class="desc">Mizik demo</span></button>
+        <button class="action" data-command="messages"><span class="emoji">💬</span><span class="name">Messages</span><span class="desc">Mesaj demo</span></button>
+        <button class="action" data-command="focus"><span class="emoji">🧘</span><span class="name">Focus</span><span class="desc">Mòd konsantrasyon</span></button>
+        <button class="action" data-command="back"><span class="emoji">↩️</span><span class="name">Back</span><span class="desc">Retounen lakay</span></button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head"><h3>🎙️ VOICE CONTROL</h3><span class="small">OPTIONAL</span></div>
+      <p class="small" style="line-height:1.7">Peze bouton an, bay yon kòmand an anglè oswa an kreyòl si navigatè a rekonèt li. Sa pa li panse ou.</p>
+      <button class="primary" id="voiceBtn">🎙️ Kòmanse pale</button>
+      <div class="voice-status" id="voiceStatus" aria-live="polite">Mikwo a poko aktive.</div>
+      <div class="button-row"><button class="secondary" id="langBtn">Lang: English</button></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head"><h3>👆 GESTURE CONTROL</h3><span class="small">TOUCH</span></div>
+      <div id="gesturePad">
+        <div>Glise dwèt ou isit la<br><b>← → ↑ ↓</b><br><span style="font-size:10px">Swipe agoch/adwat/anlè/anba</span></div>
+      </div>
+      <p class="small" id="gestureStatus" style="line-height:1.6;margin:10px 0 0">Touche zòn nan pou eseye jès yo.</p>
+    </section>
+
+    <section class="panel wide">
+      <div class="section-head"><h3>🧾 ACTIVITY LOG</h3><span class="small" id="logCount">0 evènman</span></div>
+      <div class="log" id="activityLog" aria-live="polite">
+        <div class="log-entry"><span class="log-time">SYSTEM</span><span class="log-message">MindPhone BCI 0.7 pare.<small>Tout fonksyon BCI yo se demonstrasyon.</small></span></div>
+      </div>
+      <div class="button-row">
+        <button class="secondary" id="autoBtn">⏸ Sispann simulation</button>
+        <button class="secondary" id="clearLogBtn">Netwaye istwa</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="disclaimer">
+    <strong>⚠️ Nòt enpòtan:</strong> MindPhone BCI 0.7 se yon pwototip edikatif. Vag EEG, anplitid, kalite siyal, konfyans ak klasifikasyon yo pwodwi atifisyèlman. Li pa konekte ak okenn detèktè sèvo, li pa li panse, li pa yon aparèy medikal, epi kòmand yo pa kontwole lòt aplikasyon sou iPhone ou. Kòmand vokal yo ka pa disponib nan kèk navigatè.
   </div>
-  <div class="phone-card">
-    <h3>🧠 Pattern classification</h3>
-    <p id="pattern">Ap tann analizè a...</p>
-    <p id="confidence" style="margin-top:6px;color:#51f6ff">Konfyans simile: --</p>
-  </div>
-</section>
+  <footer>MINDPHONE BCI 0.7 · BUILT FOR EXPERIMENTATION · SINGLE-FILE HTML</footer>
 </div>
 
-<section class="panel">
-  <div class="row">
-    <div class="section-title">04 / DEMO COMMANDS</div>
-    <span class="status" id="autoStatus">MANUAL</span>
-  </div>
-  <div class="buttons">
-    <button class="primary" onclick="runCommand('home')">🏠 Home</button>
-    <button onclick="runCommand('music')">🎵 Music</button>
-    <button onclick="runCommand('messages')">💬 Messages</button>
-    <button onclick="runCommand('focus')">🎯 Focus mode</button>
-    <button onclick="runCommand('back')">↩️ Back</button>
-    <button class="stop" id="autoButton" onclick="toggleAuto()">▶ Auto simulation</button>
-  </div>
-  <p class="note">Kòmand yo chanje ekran telefòn vityèl la sèlman. Yo pa ouvri aplikasyon iPhone ou.</p>
-</section>
-
-<section class="panel">
-  <div class="row">
-    <div class="section-title">05 / VIRTUAL SMARTPHONE</div>
-    <span class="status">ONLINE</span>
-  </div>
-  <div class="phone">
-    <div class="phone-top"><div class="notch"></div></div>
-    <div class="phone-screen" id="phoneScreen">
-      <div class="row"><span class="phone-time" id="phoneTime">21:00</span><span>▰ ▰  Wi-Fi</span></div>
-      <div class="phone-clock" id="phoneClock">21:00</div>
-      <div class="phone-date">MindPhone Demo · Interface 0.6</div>
-      <div class="phone-card">
-        <h3 id="phoneTitle">👋 Byenveni!</h3>
-        <p id="phoneText">Telefòn vityèl ou pare. Chwazi yon kòmand pou teste koòdone a.</p>
-      </div>
-      <div class="phone-apps">
-        <div class="app"><span>🧠</span>Mind</div>
-        <div class="app"><span>🎵</span>Music</div>
-        <div class="app"><span>💬</span>Chat</div>
-        <div class="app"><span>📅</span>Agenda</div>
-        <div class="app"><span>🎯</span>Focus</div>
-        <div class="app"><span>⚙️</span>Settings</div>
-      </div>
-    </div>
-    <div class="phone-nav">
-      <button onclick="runCommand('home')">Home</button>
-      <button onclick="runCommand('music')">Music</button>
-      <button onclick="runCommand('messages')">Chat</button>
-      <button onclick="runCommand('focus')">Focus</button>
-    </div>
-  </div>
-</section>
-
-<section class="panel">
-  <div class="row">
-    <div class="section-title">06 / SYSTEM LOG</div>
-    <button onclick="clearLog()" style="padding:7px 10px">Clear</button>
-  </div>
-  <div class="log" id="log"></div>
-</section>
-
-<section class="panel">
-  <div class="section-title">ℹ️ ABOUT THIS DEMO</div>
-  <p class="note">MindPhone BCI 0.6 se yon pwojè eksperimantal pou aprann sou koòdone sèvo-òdinatè. Graf EEG, valè Alpha/Beta/Theta/Delta, klasifikasyon siyal ak kòmand otomatik yo se simulation lojisyèl. Pa gen detektè sèvo oswa EEG ki konekte. Pwojè sa a pa li panse epi li pa kontwole telefòn reyèl ou.</p>
-</section>
-<div class="footer">MINDPHONE BCI 0.6 · EXPERIMENTAL SIMULATION · BUILT FOR LEARNING</div>
-</main>
-
 <script>
-const $ = id => document.getElementById(id);
-let commandCount=0, autoMode=false, autoTimer=null, currentPage='home';
-let historyPages=[];
-let frame=0;
-const pages={
- home:{title:'🏠 Home',text:'Byenveni nan MindPhone BCI. Sa a se ekran prensipal telefòn vityèl la.'},
- music:{title:'🎵 Music Center',text:'Mòd mizik lan aktive nan demonstrasyon an. Pa gen mizik reyèl k ap jwe.'},
- messages:{title:'💬 Messages',text:'Sant mesaj vityèl la ouvri. Sa a se sèlman yon egzanp koòdone.'},
- focus:{title:'🎯 Focus Mode',text:'Mòd konsantrasyon an aktive. Valè konsantrasyon yo rete simile.'},
- back:{title:'↩️ Previous Screen',text:'Ou retounen sou ekran anvan an.'}
-};
+(() => {
+  "use strict";
 
-function log(message){
- const item=document.createElement('div');
- const time=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
- item.innerHTML='<b>['+time+']</b> '+message;
- $('log').prepend(item);
- while($('log').children.length>35)$('log').lastChild.remove();
-}
-function runCommand(page){
- if(page==='back'){
-   page=historyPages.pop()||'home';
- }else if(page!==currentPage){
-   historyPages.push(currentPage);
- }
- currentPage=page;
- const p=pages[page]||pages.home;
- $('phoneTitle').textContent=p.title;
- $('phoneText').textContent=p.text;
- commandCount++;
- $('commands').textContent=commandCount;
- log('Kòmand demo: <b>'+p.title+'</b>');
-}
-function clearLog(){$('log').innerHTML='';log('Jounal la netwaye.');}
-function toggleAuto(){
- autoMode=!autoMode;
- $('autoStatus').textContent=autoMode?'AUTO ACTIVE':'MANUAL';
- $('autoButton').textContent=autoMode?'⏸ Stop auto':'▶ Auto simulation';
- $('autoButton').classList.toggle('stop',autoMode);
- if(autoMode){
-   log('Simulation otomatik demare.');
-   autoTimer=setInterval(()=>{
-     const choices=['home','music','messages','focus'];
-     runCommand(choices[Math.floor(Math.random()*choices.length)]);
-   },4500);
- }else{
-   clearInterval(autoTimer);autoTimer=null;
-   log('Simulation otomatik kanpe.');
- }
-}
-function updateMetrics(){
- const alpha=Math.round(25+Math.random()*70);
- const beta=Math.round(20+Math.random()*75);
- const theta=Math.round(10+Math.random()*65);
- const delta=Math.round(5+Math.random()*45);
- [['alpha',alpha],['beta',beta],['theta',theta],['delta',delta]].forEach(([name,val])=>{
-   $(name).style.width=val+'%';
-   $(name+'N').textContent=val+'%';
- });
- const focus=Math.max(35,Math.min(99,Math.round(beta*.65+alpha*.35)));
- const quality=Math.round(80+Math.random()*19);
- $('focus').textContent=focus+'%';
- $('signal').textContent=quality+'%';
- let pattern,confidence;
- if(beta>65){pattern='High-activity pattern (simile)';confidence=80+Math.round(Math.random()*15);}
- else if(alpha>60){pattern='Relaxed pattern (simile)';confidence=78+Math.round(Math.random()*18);}
- else if(theta>48){pattern='Low-activity pattern (simile)';confidence=72+Math.round(Math.random()*20);}
- else{pattern='Mixed pattern (simile)';confidence=65+Math.round(Math.random()*25);}
- $('pattern').textContent=pattern;
- $('confidence').textContent='Konfyans simile: '+confidence+'%';
-}
-const canvas=$('eeg'),ctx=canvas.getContext('2d');
-let points=Array.from({length:180},()=>0);
-function resizeCanvas(){
- const rect=canvas.getBoundingClientRect();
- const dpr=Math.min(window.devicePixelRatio||1,2);
- canvas.width=Math.max(1,Math.floor(rect.width*dpr));
- canvas.height=Math.max(1,Math.floor(rect.height*dpr));
- ctx.setTransform(dpr,0,0,dpr,0,0);
-}
-function drawEEG(){
- const w=canvas.clientWidth,h=canvas.clientHeight;
- if(!w||!h)return;
- ctx.clearRect(0,0,w,h);
- ctx.strokeStyle='#263252';ctx.lineWidth=1;
- for(let y=20;y<h;y+=25){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
- for(let x=25;x<w;x+=35){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
- points.push(Math.sin(frame*.17)*10+Math.sin(frame*.43)*5+(Math.random()-.5)*20);
- if(points.length>180)points.shift();
- ctx.beginPath();
- points.forEach((v,i)=>{
-   const x=i/(points.length-1)*w;
-   const y=h/2+v;
-   if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
- });
- ctx.strokeStyle='#51f6ff';ctx.lineWidth=1.8;
- ctx.shadowColor='#51f6ff';ctx.shadowBlur=7;ctx.stroke();ctx.shadowBlur=0;
- frame++;
- requestAnimationFrame(drawEEG);
-}
-function updateClock(){
- const now=new Date();
- const t=now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
- $('phoneTime').textContent=t;
- $('phoneClock').textContent=t;
-}
-window.addEventListener('resize',resizeCanvas);
-resizeCanvas();drawEEG();updateClock();updateMetrics();updateClock();
-setInterval(updateMetrics,2200);
-setInterval(updateClock,10000);
-log('MindPhone BCI 0.6 pare.');
-log('EEG simulator: siyal atifisyèl sèlman.');
-log('Virtual phone: pare pou resevwa kòmand demo.');
+  const $ = id => document.getElementById(id);
+  const logBox = $("activityLog");
+  const canvas = $("eeg");
+  const ctx = canvas.getContext("2d");
+
+  let running = true;
+  let voiceRecognition = null;
+  let voiceActive = false;
+  let language = "en-US";
+  let commands = 0;
+  let logTotal = 0;
+  let startTime = Date.now();
+  let signal = 42.8;
+  let confidence = 82;
+  let phase = 0;
+  let lastPattern = "Relaxation";
+  let lastPhoneScreen = "home";
+  let swipeStart = null;
+  let lastTick = 0;
+
+  const patterns = [
+    { name:"Relaxation", description:"Modèl simulation ki reprezante yon eta kalm." },
+    { name:"Focus", description:"Modèl simulation ki reprezante konsantrasyon." },
+    { name:"Attention", description:"Modèl simulation ki reprezante atansyon." },
+    { name:"Rest", description:"Modèl simulation ki reprezante repo." }
+  ];
+
+  const phoneScreens = {
+    home: {
+      title:"🏠 Home",
+      message:"Byenveni nan telefòn vityèl MindPhone BCI 0.7 la."
+    },
+    music: {
+      title:"🎵 Music Studio",
+      message:"Sa a se yon ekran mizik demonstrasyon. Li pa jwe mizik reyèl."
+    },
+    messages: {
+      title:"💬 Messages",
+      message:"Sa a se yon bwat mesaj vityèl. Pa gen SMS reyèl ki voye."
+    },
+    focus: {
+      title:"🧘 Focus Mode",
+      message:"Mòd demonstrasyon an aktive. Pran yon ti moman pou konsantre."
+    }
+  };
+
+  function addLog(message, detail = "Demo event") {
+    const now = new Date();
+    const time = now.toLocaleTimeString([], {
+      hour:"2-digit", minute:"2-digit", second:"2-digit"
+    });
+    const entry = document.createElement("div");
+    entry.className = "log-entry";
+
+    const t = document.createElement("span");
+    t.className = "log-time";
+    t.textContent = time;
+
+    const m = document.createElement("span");
+    m.className = "log-message";
+    m.textContent = message;
+
+    const small = document.createElement("small");
+    small.textContent = detail;
+    m.appendChild(small);
+
+    entry.append(t, m);
+    logBox.prepend(entry);
+    logTotal++;
+    $("logCount").textContent = logTotal + " evènman";
+
+    while (logBox.children.length > 35) {
+      logBox.removeChild(logBox.lastElementChild);
+    }
+  }
+
+  function updatePhone(command) {
+    if (command === "back") command = "home";
+    const screen = phoneScreens[command] || phoneScreens.home;
+    lastPhoneScreen = command;
+    $("phoneTitle").textContent = screen.title;
+    $("phoneMessage").textContent = screen.message;
+    $("phoneState").textContent = command.toUpperCase();
+  }
+
+  function runCommand(rawCommand, source = "Bouton") {
+    const command = String(rawCommand || "").toLowerCase().trim();
+    const aliases = {
+      "lakay":"home", "akèy":"home", "kòmansman":"home",
+      "home":"home", "go home":"home", "open home":"home",
+      "mizik":"music", "music":"music", "play music":"music",
+      "mesaj":"messages", "messages":"messages", "message":"messages",
+      "text":"messages", "open messages":"messages",
+      "konsantre":"focus", "focus":"focus", "concentrate":"focus",
+      "retounen":"back", "tounen":"back", "back":"back",
+      "go back":"back"
+    };
+
+    const target = aliases[command];
+    if (!target) {
+      addLog("Kòmand pa rekonèt: " + command, source);
+      return false;
+    }
+
+    updatePhone(target);
+    commands++;
+    $("commandCount").textContent = commands;
+    addLog("Kòmand: " + target.toUpperCase(), "Sous: " + source);
+    return true;
+  }
+
+  document.querySelectorAll("[data-command]").forEach(button => {
+    button.addEventListener("click", () => {
+      runCommand(button.dataset.command, "Bouton ekran");
+    });
+  });
+
+  function updatePattern() {
+    const next = patterns[Math.floor(Math.random() * patterns.length)];
+    lastPattern = next.name;
+    confidence = 65 + Math.floor(Math.random() * 34);
+    $("pattern").textContent = next.name;
+    $("patternDescription").textContent = next.description + " Sa pa yon rezilta EEG reyèl.";
+    $("confidenceText").textContent = confidence + "%";
+    $("confidenceBar").style.width = confidence + "%";
+    addLog("Klasifikatè simulation: " + next.name, "Konfyans atifisyèl: " + confidence + "%");
+  }
+
+  $("classifyBtn").addEventListener("click", updatePattern);
+
+  function setVoiceStatus(message) {
+    $("voiceStatus").textContent = message;
+  }
+
+  function stopVoice() {
+    voiceActive = false;
+    $("voiceBtn").textContent = "🎙️ Kòmanse pale";
+    if (voiceRecognition) {
+      try { voiceRecognition.stop(); } catch (_) {}
+    }
+  }
+
+  function startVoice() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      setVoiceStatus("Navigatè sa a pa sipòte rekonesans vokal la. Eseye yon navigatè konpatib oswa itilize bouton kòmand yo.");
+      addLog("Voice API pa disponib", "Navigatè a pa sipòte rekonesans vokal");
+      return;
+    }
+
+    if (voiceActive) {
+      stopVoice();
+      setVoiceStatus("Rekonesans vokal kanpe.");
+      return;
+    }
+
+    try {
+      voiceRecognition = new SpeechRecognition();
+      voiceRecognition.lang = language;
+      voiceRecognition.continuous = false;
+      voiceRecognition.interimResults = false;
+      voiceRecognition.maxAlternatives = 1;
+
+      voiceRecognition.onstart = () => {
+        voiceActive = true;
+        $("voiceBtn").textContent = "⏹ Kanpe mikwo";
+        setVoiceStatus("Mikwo aktif. Di: home, music, messages, focus oswa back.");
+        addLog("Mikwo aktive", "Rekonesans vokal navigatè");
+      };
+
+      voiceRecognition.onresult = event => {
+        const transcript = event.results[0][0].transcript;
+        setVoiceStatus("Ou di: " + transcript);
+        addLog("Vwa rekonèt: " + transcript, "Rezilta rekonesans vokal");
+        const words = transcript.toLowerCase();
+        const candidates = [
+          ["messages", ["messages","message","mesaj","text"]],
+          ["music", ["music","mizik"]],
+          ["focus", ["focus","concentrate","konsantre"]],
+          ["back", ["back","retounen","tounen"]],
+          ["home", ["home","lakay","akèy"]]
+        ];
+        const match = candidates.find(item => item[1].some(word => words.includes(word)));
+        if (match) {
+          runCommand(match[0], "Vwa");
+        } else {
+          setVoiceStatus("Mwen tande: “" + transcript + "”. Eseye home, music, messages, focus oswa back.");
+        }
+      };
+
+      voiceRecognition.onerror = event => {
+        setVoiceStatus("Pwoblèm mikwo/rekonesans: " + event.error + ". Verifye pèmisyon mikwo a.");
+        addLog("Erè vokal: " + event.error, "Verifye pèmisyon ak sipò navigatè");
+      };
+
+      voiceRecognition.onend = () => {
+        voiceActive = false;
+        $("voiceBtn").textContent = "🎙️ Kòmanse pale";
+      };
+
+      voiceRecognition.start();
+    } catch (error) {
+      setVoiceStatus("Pa kapab kòmanse mikwo a. Verifye pèmisyon navigatè a.");
+      voiceActive = false;
+      $("voiceBtn").textContent = "🎙️ Kòmanse pale";
+    }
+  }
+
+  $("voiceBtn").addEventListener("click", startVoice);
+  $("langBtn").addEventListener("click", () => {
+    language = language === "en-US" ? "fr-FR" : "en-US";
+    $("langBtn").textContent = "Lang: " + (language === "en-US" ? "English" : "Français");
+    setVoiceStatus("Lang rekonesans chanje. Kòmand ki pi fasil pou sistèm nan: home, music, messages, focus, back.");
+    addLog("Lang vokal: " + language, "Konfigirasyon rekonesans");
+  });
+
+  const pad = $("gesturePad");
+  pad.addEventListener("pointerdown", event => {
+    swipeStart = { x:event.clientX, y:event.clientY };
+    pad.classList.add("active");
+    try { pad.setPointerCapture(event.pointerId); } catch (_) {}
+  });
+
+  pad.addEventListener("pointerup", event => {
+    pad.classList.remove("active");
+    if (!swipeStart) return;
+
+    const dx = event.clientX - swipeStart.x;
+    const dy = event.clientY - swipeStart.y;
+    swipeStart = null;
+
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < 28) {
+      $("gestureStatus").textContent = "Ti mouvman detekte. Glise dwèt ou pi lwen pou yon jès.";
+      return;
+    }
+
+    let direction;
+    if (Math.abs(dx) > Math.abs(dy)) {
+      direction = dx > 0 ? "adwat →" : "← agoch";
+      if (dx > 0) {
+        const sequence = ["home","music","messages","focus"];
+        const i = sequence.indexOf(lastPhoneScreen);
+        runCommand(sequence[(i + 1 + sequence.length) % sequence.length], "Jès adwat");
+      } else {
+        runCommand("back", "Jès agoch");
+      }
+    } else {
+      direction = dy > 0 ? "anba ↓" : "↑ anlè";
+      if (dy < 0) runCommand("focus", "Jès anlè");
+      else runCommand("home", "Jès anba");
+    }
+
+    $("gestureStatus").textContent = "Jès detekte: " + direction + ". Se navigasyon telefòn vityèl la.";
+    addLog("Jès: " + direction, "Kontwòl manyen");
+  });
+
+  pad.addEventListener("pointercancel", () => {
+    swipeStart = null;
+    pad.classList.remove("active");
+  });
+
+  $("autoBtn").addEventListener("click", () => {
+    running = !running;
+    $("autoBtn").textContent = running ? "⏸ Sispann simulation" : "▶ Rekòmanse simulation";
+    $("signalState").textContent = running ? "SIMULATED" : "PAUSED";
+    $("systemStatus").textContent = running ? "Demo aktif · simulation" : "Simulation an poz";
+    addLog(running ? "Simulation rekòmanse" : "Simulation mete an poz", "Kontwòl sistèm");
+  });
+
+  $("clearLogBtn").addEventListener("click", () => {
+    logBox.replaceChildren();
+    logTotal = 0;
+    $("logCount").textContent = "0 evènman";
+    addLog("Istwa netwaye", "Nouvo sesyon nan lis aktivite a");
+  });
+
+  function updateBands() {
+    const values = [
+      20 + Math.random() * 75,
+      15 + Math.random() * 80,
+      10 + Math.random() * 70,
+      10 + Math.random() * 60
+    ];
+    ["alpha","beta","theta","delta"].forEach((name, i) => {
+      $(name + "Fill").style.width = values[i] + "%";
+      $(name + "Val").textContent = Math.round(values[i]) + "%";
+    });
+    signal = 10 + Math.random() * 80;
+    $("signalValue").textContent = signal.toFixed(1);
+    $("quality").textContent = (80 + Math.floor(Math.random() * 20)) + "%";
+  }
+
+  function drawEEG(timestamp = 0) {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const width = Math.max(1, rect.width);
+    const height = Math.max(1, rect.height);
+
+    if (canvas.width !== Math.round(width * dpr) ||
+        canvas.height !== Math.round(height * dpr)) {
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+    }
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, width, height);
+
+    ctx.strokeStyle = "#20304a";
+    ctx.lineWidth = 0.6;
+    for (let x = 0; x < width; x += 20) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
+    }
+    for (let y = 0; y < height; y += 20) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
+    }
+
+    const gradient = ctx.createLinearGradient(0, 0, width, 0);
+    gradient.addColorStop(0, "#7187ff");
+    gradient.addColorStop(.55, "#50f5ff");
+    gradient.addColorStop(1, "#bd72ff");
+
+    ctx.beginPath();
+    for (let x = 0; x < width; x++) {
+      const t = x / width * 7.5 + phase;
+      const y = height / 2
+        + Math.sin(t * 3.0) * 11
+        + Math.sin(t * 7.3) * 5
+        + Math.sin(t * 14.1) * 2.3
+        + Math.sin(t * 1.4) * 4;
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = gradient;
+    ctx.lineWidth = 1.8;
+    ctx.shadowColor = "#50f5ff";
+    ctx.shadowBlur = 7;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  }
+
+  function loop(timestamp) {
+    if (!lastTick || timestamp - lastTick > 900) {
+      lastTick = timestamp;
+      if (running) {
+        phase += .12;
+        updateBands();
+        if (Math.random() > .72) {
+          confidence = 65 + Math.floor(Math.random() * 34);
+          $("confidenceText").textContent = confidence + "%";
+          $("confidenceBar").style.width = confidence + "%";
+        }
+      }
+    }
+
+    drawEEG(timestamp);
+
+    const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+    const mins = String(Math.floor(elapsedSeconds / 60)).padStart(2,"0");
+    const secs = String(elapsedSeconds % 60).padStart(2,"0");
+    $("elapsed").textContent = mins + ":" + secs;
+
+    const now = new Date();
+    $("phoneClock").textContent = now.toLocaleTimeString([], {
+      hour:"2-digit", minute:"2-digit"
+    });
+    $("phoneDate").textContent = now.toLocaleDateString([], {
+      weekday:"short", month:"short", day:"numeric"
+    });
+
+    requestAnimationFrame(loop);
+  }
+
+  window.addEventListener("resize", () => drawEEG());
+  $("confidenceBar").style.width = confidence + "%";
+  updateBands();
+  addLog("MindPhone BCI 0.7 inisyalize", "Tout siyal yo se done simulation");
+  addLog("Voice control pare pou tès", "Disponibilite depann de navigatè");
+  requestAnimationFrame(loop);
+})();
 </script>
 </body>
 </html>
