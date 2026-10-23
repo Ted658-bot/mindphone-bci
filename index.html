@@ -1,354 +1,681 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ht">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0b1020">
-<title>MindPhone BCI 0.3</title>
+<meta name="theme-color" content="#070b16">
+<title>MindPhone BCI 0.4</title>
+
 <style>
 :root {
-  color-scheme: dark;
-  --bg: #0b1020;
-  --card: #151e31;
-  --line: #2b3850;
-  --txt: #f3f6fc;
-  --muted: #a9b6cb;
-  --blue: #76a9ff;
-  --green: #8fe0bd;
+  --bg: #070b16;
+  --panel: #101a2c;
+  --panel2: #0b1323;
+  --cyan: #49f5e5;
+  --blue: #6c8cff;
+  --purple: #ba79ff;
+  --text: #edf5ff;
+  --muted: #91a4c3;
+  --border: rgba(111, 151, 208, .22);
+  --green: #53f6a8;
+  --red: #ff718a;
 }
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  padding: max(16px,env(safe-area-inset-top)) 14px 24px;
-  background: radial-gradient(ellipse at top,#182846,var(--bg) 60%);
-  color: var(--txt);
-  font: 16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(ellipse at top, #172d52 0%, transparent 48%),
+    var(--bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  min-height: 100vh;
 }
-main { max-width: 680px; margin: auto; }
-header { display:flex;align-items:center;gap:12px;padding:18px 0; }
+button { font: inherit; }
+.app {
+  width: min(100% - 24px, 850px);
+  margin: auto;
+  padding: 24px 0 42px;
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.brand { display: flex; align-items: center; gap: 12px; }
 .logo {
-  width:52px;height:52px;border-radius:16px;
-  background:#263b60;display:grid;place-items:center;font-size:28px;
+  width: 48px; height: 48px;
+  display: grid; place-items: center;
+  border-radius: 15px;
+  font-size: 25px;
+  background: linear-gradient(135deg, #1d506b, #53358c);
+  border: 1px solid #58d9ee66;
+  box-shadow: 0 0 25px #49f5e522;
 }
-h1 { font-size:25px;margin:0 0 4px; }
-h2 { font-size:18px;margin:0 0 12px; }
-h3 { font-size:15px; }
-.sub,.notice { color:var(--muted);font-size:13px;line-height:1.55; }
+h1 { font-size: 21px; margin: 0 0 5px; letter-spacing: .4px; }
+.subtitle { color: var(--muted); font-size: 12px; }
+.version {
+  color: var(--cyan);
+  border: 1px solid #49f5e555;
+  border-radius: 20px;
+  padding: 7px 10px;
+  font-size: 11px;
+  white-space: nowrap;
+}
 .panel {
-  background:rgba(21,30,49,.96);
-  border:1px solid var(--line);border-radius:18px;
-  padding:16px;margin:14px 0;
+  background: linear-gradient(145deg, #121f34ee, #0b1220f5);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 17px;
+  margin-bottom: 15px;
+  box-shadow: 0 12px 35px #00000020;
 }
-.row { display:flex;align-items:center;justify-content:space-between;gap:10px; }
-.status { display:flex;align-items:center;gap:10px; }
-.dot { width:10px;height:10px;border-radius:50%;background:#e7bd67; }
-.badge {
-  margin-left:auto;border:1px solid #8e7440;color:#f4d38b;
-  border-radius:999px;padding:6px 9px;font-size:10px;font-weight:bold;
+.panel-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  font-weight: 700;
 }
-.meter { height:7px;background:#27344b;border-radius:9px;overflow:hidden;margin:12px 0; }
-.meter div { height:100%;width:0;background:var(--green);transition:width .2s; }
-.grid { display:grid;grid-template-columns:1fr 1fr;gap:9px; }
-button {
-  font:inherit;cursor:pointer;touch-action:manipulation;
+.pill {
+  font-size: 11px;
+  color: var(--muted);
+  background: #19273c;
+  padding: 6px 9px;
+  border-radius: 20px;
 }
-.cmd {
-  min-height:78px;border:1px solid #3c5276;border-radius:13px;
-  background:#1a2942;color:var(--txt);font-weight:bold;padding:10px 5px;
+.pill.live { color: var(--green); }
+.statusline {
+  display: flex; align-items: center; gap: 9px;
+  color: var(--muted); font-size: 12px;
+  margin-bottom: 13px;
 }
-.cmd span { display:block;font-size:23px;margin-bottom:4px; }
-.action,.secondary {
-  padding:12px 14px;border-radius:11px;margin:3px 3px 3px 0;
+.dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--red);
 }
-.action { background:#2563eb;color:white;border:0; }
-.secondary { background:transparent;color:white;border:1px solid #526078; }
-button:focus-visible { outline:3px solid var(--blue);outline-offset:2px; }
+.dot.live {
+  background: var(--green);
+  box-shadow: 0 0 12px var(--green);
+}
 canvas {
-  display:block;width:100%;height:210px;
-  border:1px solid #2b3850;border-radius:12px;
-  background:#080e1b;
+  display: block;
+  width: 100%;
+  height: 190px;
+  border-radius: 12px;
+  background: #07101e;
+  border: 1px solid #27405e;
 }
-.legend { display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:10px 0; }
-.legend span { color:var(--muted);font-size:12px; }
-.signalbox { background:#080e1b;border-radius:10px;padding:12px;margin-top:10px; }
-.event { border-bottom:1px solid var(--line);padding:10px 0;font-size:13px;overflow-wrap:anywhere; }
-.event:last-child { border-bottom:0; }
-.event time { display:block;color:var(--muted);font-size:11px;margin-bottom:4px; }
-footer { text-align:center;color:var(--muted);font-size:12px;padding:16px 0; }
+.graph-legend {
+  display: flex; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px;
+  font-size: 11px; color: var(--muted);
+  margin-top: 10px;
+}
+.legend-dot {
+  display: inline-block; width: 7px; height: 7px;
+  border-radius: 50%; margin-right: 5px;
+  background: var(--cyan);
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.metric {
+  background: #0a1424;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 13px;
+  min-width: 0;
+}
+.metric-label { font-size: 11px; color: var(--muted); margin-bottom: 9px; }
+.metric-value { font-size: 23px; font-weight: 750; }
+.metric-unit { font-size: 11px; color: var(--muted); font-weight: 400; }
+.meter {
+  height: 6px; border-radius: 20px;
+  background: #26364c; overflow: hidden; margin-top: 10px;
+}
+.meter-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  border-radius: inherit; transition: width .2s;
+}
+.controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+.btn {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 8px;
+  color: var(--text);
+  background: #19263b;
+  cursor: pointer;
+  font-weight: 650;
+  font-size: 12px;
+  min-height: 44px;
+  transition: transform .12s, filter .12s;
+}
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn-primary {
+  color: #05151b;
+  border: none;
+  background: linear-gradient(110deg, var(--cyan), #7baaff);
+}
+.btn-purple {
+  background: #302451;
+  border-color: #a77aff66;
+}
+.btn-danger {
+  color: #ffb0bf;
+  background: #351b2b;
+  border-color: #ff718a44;
+}
+.btn-wide { width: 100%; margin-top: 10px; }
+.mode-row {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-top: 12px;
+}
+.mode-btn { flex: 1; min-width: 110px; }
+.command-result {
+  background: #081321;
+  border: 1px solid #49f5e533;
+  border-radius: 15px;
+  padding: 16px;
+  margin-top: 12px;
+}
+.result-label { color: var(--muted); font-size: 11px; margin-bottom: 8px; }
+.result-main { font-size: 20px; font-weight: 750; }
+.result-desc { color: var(--muted); font-size: 12px; line-height: 1.6; margin-top: 7px; }
+.log {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 8px;
+}
+.log li {
+  padding: 11px 12px;
+  background: #091321;
+  border: 1px solid #20334c;
+  border-radius: 11px;
+  font-size: 12px;
+  display: flex; justify-content: space-between;
+  gap: 10px;
+}
+.log small { color: var(--muted); }
+.empty { color: var(--muted); font-size: 12px; text-align: center; padding: 14px 0; }
+.disclaimer {
+  color: #9eb0ca;
+  font-size: 11px;
+  line-height: 1.7;
+  border-left: 3px solid var(--purple);
+  padding: 3px 0 3px 12px;
+}
+footer { text-align: center; color: #7185a3; font-size: 11px; padding: 8px 0; }
+@media (min-width: 600px) {
+  .metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .metric-value { font-size: 25px; }
+  h1 { font-size: 25px; }
+  .controls { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
 </style>
 </head>
+
 <body>
-<main>
-<header>
-  <div class="logo">🧠</div>
-  <div>
-    <div class="sub">BCI LAB · PROTOTIP 0.3</div>
-    <h1>MindPhone</h1>
-    <div class="sub">Laboratwa siyal eksperimantal</div>
-  </div>
-</header>
-
-<section class="panel">
-  <div class="status">
-    <div class="dot" id="dot"></div>
-    <div>
-      <strong id="statusTitle">An atant</strong>
-      <div class="sub" id="statusText">Pa gen aparèy EEG konekte</div>
+<main class="app">
+  <header>
+    <div class="brand">
+      <div class="logo">🧠</div>
+      <div>
+        <h1>MindPhone BCI</h1>
+        <div class="subtitle">Brain Interface · Simulation Lab</div>
+      </div>
     </div>
-    <span class="badge">SIMILASYON</span>
-  </div>
-  <div class="meter"><div id="meter"></div></div>
-  <div class="sub" id="feedback">Kòmanse grafik la pou wè siyal simulation an.</div>
-</section>
+    <div class="version">VERSION 0.4</div>
+  </header>
 
-<section class="panel">
-  <div class="row">
-    <h2>📈 Grafik siyal EEG</h2>
-    <span class="badge">FAKRIKASYON</span>
-  </div>
-  <p class="notice">
-    Grafik sa a pwodui siyal atifisyèl pou teste entèfas la.
-    Li pa montre aktivite sèvo ou.
-  </p>
+  <section class="panel">
+    <div class="panel-title">
+      <span>◈ Sant siyal la</span>
+      <span class="pill" id="signalBadge">AN ATANT</span>
+    </div>
+    <div class="statusline">
+      <span class="dot" id="statusDot"></span>
+      <span id="statusText">Similatè a pare pou demare</span>
+    </div>
+    <canvas id="signal" aria-label="Grafik siyal EEG simile"></canvas>
+    <div class="graph-legend">
+      <span><i class="legend-dot"></i>Siyal simile</span>
+      <span id="sampleCount">0 echantiyon</span>
+      <span id="clock">0.0 s</span>
+    </div>
+    <div class="mode-row">
+      <button class="btn btn-primary mode-btn" id="startBtn">▶ Kòmanse</button>
+      <button class="btn mode-btn" id="stopBtn" disabled>Ⅱ Kanpe</button>
+      <button class="btn btn-danger mode-btn" id="resetBtn">↺ Reyajiste</button>
+    </div>
+  </section>
 
-  <canvas id="signal" aria-label="Grafik siyal EEG simulation"></canvas>
+  <section class="panel">
+    <div class="panel-title">
+      <span>📊 Analiz siyal la</span>
+      <span class="pill">DONE SIMILE</span>
+    </div>
+    <div class="metrics">
+      <div class="metric">
+        <div class="metric-label">Anplitid</div>
+        <div class="metric-value"><span id="amplitude">0.00</span><span class="metric-unit"> u.a.</span></div>
+        <div class="meter"><div class="meter-fill" id="ampBar"></div></div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Frekans prensipal</div>
+        <div class="metric-value"><span id="frequency">8.0</span><span class="metric-unit"> Hz*</span></div>
+        <div class="meter"><div class="meter-fill" id="freqBar"></div></div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Nivo bri</div>
+        <div class="metric-value"><span id="noise">12</span><span class="metric-unit"> %*</span></div>
+        <div class="meter"><div class="meter-fill" id="noiseBar"></div></div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Kalite simile</div>
+        <div class="metric-value" id="quality">—</div>
+        <div class="meter"><div class="meter-fill" id="qualityBar"></div></div>
+      </div>
+    </div>
+    <p class="disclaimer" style="margin-top:14px">
+      *Hz, bri ak kalite yo se valè demonstrasyon ki pwodui pa lojisyèl la.
+      Yo pa rezilta yon mezi sèvo reyèl.
+    </p>
+  </section>
 
-  <div class="legend">
-    <span>● Siyal simulation</span>
-    <span id="graphState">Estati: kanpe</span>
-  </div>
-  <div class="signalbox">
-    <div class="sub">Dènye valè simulation</div>
-    <strong id="signalValue">0.00</strong>
-    <div class="sub" id="sampleCount">Echantiyon: 0</div>
-  </div>
+  <section class="panel">
+    <div class="panel-title">
+      <span>🎮 Sant kòmand</span>
+      <span class="pill" id="commandMode">MANYÈL</span>
+    </div>
+    <div class="subtitle" style="margin-bottom:13px">
+      Peze yon kòmand pou wè kijan yon koòdone BCI ta ka reyaji.
+    </div>
+    <div class="controls">
+      <button class="btn btn-primary" data-command="Chwazi">✓ Chwazi</button>
+      <button class="btn btn-purple" data-command="Retounen">↩ Retounen</button>
+      <button class="btn" data-command="Pwochen">→ Pwochen</button>
+      <button class="btn btn-danger" data-command="Pa fè anyen">⏸ Pa fè anyen</button>
+    </div>
+    <div class="command-result" aria-live="polite">
+      <div class="result-label">DÈNYE KÒMAND</div>
+      <div class="result-main" id="resultTitle">Pa gen kòmand ankò</div>
+      <div class="result-desc" id="resultDesc">
+        Kòmanse demonstrasyon an epi teste youn nan kòmand yo.
+      </div>
+    </div>
+    <div class="mode-row">
+      <button class="btn btn-primary mode-btn" id="autoBtn">⚡ Aktive mòd otomatik</button>
+      <button class="btn mode-btn" id="manualBtn" disabled>✋ Mòd manyèl</button>
+    </div>
+    <p class="subtitle" style="line-height:1.6;margin-top:12px">
+      Mòd otomatik la chwazi kòmand demonstrasyon nan entèval regilye.
+      Se lojisyèl an k ap chwazi yo, se pa sèvo w.
+    </p>
+  </section>
 
-  <p>
-    <button class="action" id="start">▶ Kòmanse</button>
-    <button class="secondary" id="stop">⏸ Kanpe</button>
-    <button class="secondary" id="reset">↺ Reyajiste</button>
-  </p>
-</section>
+  <section class="panel">
+    <div class="panel-title">
+      <span>📜 Istwa tès yo</span>
+      <span class="pill" id="logCount">0 kòmand</span>
+    </div>
+    <ul class="log" id="logList">
+      <li class="empty">Pa gen tès pou kounye a.</li>
+    </ul>
+    <button class="btn btn-danger btn-wide" id="clearLogBtn">Efase istwa tès yo</button>
+  </section>
 
-<section class="panel">
-  <h2>🎮 Teste kòmand yo</h2>
-  <div class="grid">
-    <button class="cmd" data-cmd="Chwazi"><span>☑️</span>Chwazi</button>
-    <button class="cmd" data-cmd="Retounen"><span>↩️</span>Retounen</button>
-    <button class="cmd" data-cmd="Pwochen"><span>➡️</span>Pwochen</button>
-    <button class="cmd" data-cmd="Pa fè anyen"><span>⏸️</span>Pa fè anyen</button>
-  </div>
-  <p class="notice">Sa yo se kòmand manyèl demonstrasyon. Yo pa kontwole iPhone nan oswa lòt aplikasyon.</p>
-</section>
+  <section class="panel">
+    <div class="panel-title">🛡️ Sa demonstrasyon sa a vle di</div>
+    <p class="disclaimer">
+      MindPhone BCI 0.4 se yon pwototip edikatif. Li kreye siyal atifisyèl pou
+      montre kijan yon grafik ak yon sistèm kòmand ka fonksyone.
+      Li pa konekte ak elektwòd oswa detektè EEG, li pa li panse, epi li pa
+      voye kòmand nan lòt aplikasyon iPhone ou.
+    </p>
+  </section>
 
-<section class="panel">
-  <div class="row">
-    <h2>Jounal tès</h2>
-    <button class="secondary" id="clear">Netwaye</button>
-  </div>
-  <div id="log">
-    <div class="event">Aplikasyon pare pou tès.</div>
-  </div>
-</section>
-
-<section class="panel">
-  <h2>🔬 Pwochen etap</h2>
-  <p class="notice">
-    1. Verifye grafik simulation an.<br>
-    2. Aprann analize done siyal yo.<br>
-    3. Etidye koneksyon ak yon aparèy EEG konpatib pita.<br>
-    4. Eksplore limit ak fonksyon aksè iOS yo.
-  </p>
-  <p class="notice">
-    Vèsyon sa a pa resevwa done EEG reyèl, pa li panse epi li pa bay kontwòl dirèk sou telefòn nan.
-  </p>
-</section>
-<footer>MindPhone BCI 0.3 · Pwototip lojisyèl · $0</footer>
+  <footer>MindPhone BCI 0.4 · Demo Lab · Simulation only</footer>
 </main>
 
 <script>
-const canvas = document.getElementById('signal');
-const ctx = canvas.getContext('2d');
+(() => {
+  "use strict";
 
-const statusTitle = document.getElementById('statusTitle');
-const statusText = document.getElementById('statusText');
-const feedback = document.getElementById('feedback');
-const dot = document.getElementById('dot');
-const meter = document.getElementById('meter');
-const graphState = document.getElementById('graphState');
-const signalValue = document.getElementById('signalValue');
-const sampleCount = document.getElementById('sampleCount');
-const log = document.getElementById('log');
+  const $ = (id) => document.getElementById(id);
+  const canvas = $("signal");
+  const ctx = canvas.getContext("2d");
 
-let running = false;
-let animationId = null;
-let phase = 0;
-let samples = 0;
-let values = [];
-let lastFrame = 0;
+  let running = false;
+  let autoMode = false;
+  let frameId = null;
+  let lastTime = 0;
+  let elapsed = 0;
+  let lastAutoTime = 0;
+  let sampleTotal = 0;
+  let phase = 0;
+  let history = [];
+  let log = [];
+  let lastMetricsUpdate = 0;
 
-function resizeCanvas() {
-  const rect = canvas.getBoundingClientRect();
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  canvas.width = Math.max(1, Math.round(rect.width * dpr));
-  canvas.height = Math.max(1, Math.round(rect.height * dpr));
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  drawGraph();
-}
+  const commands = [
+    {
+      name: "Chwazi",
+      title: "✓ Kòmand: Chwazi",
+      desc: "Nan demonstrasyon sa a, sistèm lan make aksyon Chwazi a kòm dènye aksyon an."
+    },
+    {
+      name: "Retounen",
+      title: "↩ Kòmand: Retounen",
+      desc: "Nan demonstrasyon sa a, sistèm lan montre aksyon Retounen an kòm yon kòmand simile."
+    },
+    {
+      name: "Pwochen",
+      title: "→ Kòmand: Pwochen",
+      desc: "Nan demonstrasyon sa a, sistèm lan montre aksyon Pwochen an kòm yon kòmand simile."
+    },
+    {
+      name: "Pa fè anyen",
+      title: "⏸ Pa gen aksyon",
+      desc: "Sistèm demonstrasyon an resevwa kòmand pou li pa fè okenn aksyon."
+    }
+  ];
 
-function drawGraph() {
-  const w = canvas.clientWidth;
-  const h = canvas.clientHeight;
-  if (!w || !h) return;
+  function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
 
-  ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = '#080e1b';
-  ctx.fillRect(0, 0, w, h);
-
-  // Liy gri grafik la
-  ctx.strokeStyle = '#1d2b40';
-  ctx.lineWidth = 1;
-  for (let x = 0; x <= w; x += 30) {
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, h);
-    ctx.stroke();
-  }
-  for (let y = 0; y <= h; y += 30) {
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(w, y);
-    ctx.stroke();
-  }
-
-  // Liy santral
-  ctx.strokeStyle = '#35445b';
-  ctx.beginPath();
-  ctx.moveTo(0, h / 2);
-  ctx.lineTo(w, h / 2);
-  ctx.stroke();
-
-  if (values.length < 2) {
-    ctx.fillStyle = '#a9b6cb';
-    ctx.font = '13px sans-serif';
-    ctx.fillText('Peze Kòmanse pou lanse simulation an', 12, h / 2 - 12);
-    return;
-  }
-
-  ctx.strokeStyle = '#8fe0bd';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-
-  values.forEach((v, i) => {
-    const x = i * (w / (values.length - 1));
-    const y = h / 2 - v * (h * 0.36);
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  });
-  ctx.stroke();
-}
-
-function addLog(message) {
-  if (log.textContent.includes('Aplikasyon pare')) {
-    log.replaceChildren();
-  }
-  const e = document.createElement('div');
-  e.className = 'event';
-  const time = document.createElement('time');
-  time.textContent = new Date().toLocaleTimeString();
-  const msg = document.createElement('div');
-  msg.textContent = message;
-  e.append(time, msg);
-  log.prepend(e);
-}
-
-function tick(timestamp) {
-  if (!running) return;
-  if (timestamp - lastFrame >= 55) {
-    lastFrame = timestamp;
-    phase += 0.22;
-
-    // Siyal atifisyèl, se pa mezi EEG reyèl
-    const value =
-      Math.sin(phase) * 0.48 +
-      Math.sin(phase * 2.4) * 0.20 +
-      (Math.random() - 0.5) * 0.28;
-
-    values.push(value);
-    if (values.length > 100) values.shift();
-
-    samples++;
-    signalValue.textContent = value.toFixed(2);
-    sampleCount.textContent = 'Echantiyon simulation: ' + samples;
-    meter.style.width = (35 + Math.abs(value) * 60) + '%';
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     drawGraph();
   }
-  animationId = requestAnimationFrame(tick);
-}
 
-document.getElementById('start').addEventListener('click', () => {
-  if (running) return;
-  running = true;
-  lastFrame = 0;
-  statusTitle.textContent = 'Simulation aktif';
-  statusText.textContent = 'Siyal atifisyèl ap pwodui';
-  feedback.textContent = 'Grafik la ap bouje ak done envante.';
-  dot.style.background = '#8fe0bd';
-  graphState.textContent = 'Estati: an mach';
-  addLog('Grafik siyal simulation kòmanse.');
-  animationId = requestAnimationFrame(tick);
-});
+  function getSize() {
+    const rect = canvas.getBoundingClientRect();
+    return { width: rect.width, height: rect.height };
+  }
 
-document.getElementById('stop').addEventListener('click', () => {
-  running = false;
-  if (animationId !== null) cancelAnimationFrame(animationId);
-  animationId = null;
-  statusTitle.textContent = 'Simulation kanpe';
-  statusText.textContent = 'Pa gen EEG reyèl';
-  feedback.textContent = 'Peze Kòmanse pou kontinye.';
-  dot.style.background = '#e7bd67';
-  graphState.textContent = 'Estati: kanpe';
-  addLog('Simulation kanpe.');
-});
+  function makeSignal(t) {
+    const base =
+      Math.sin(t * 2 * Math.PI * 8) * 0.47 +
+      Math.sin(t * 2 * Math.PI * 3.2) * 0.19 +
+      Math.sin(t * 2 * Math.PI * 13.5) * 0.09;
 
-document.getElementById('reset').addEventListener('click', () => {
-  running = false;
-  if (animationId !== null) cancelAnimationFrame(animationId);
-  animationId = null;
-  phase = 0;
-  samples = 0;
-  lastFrame = 0;
-  values = [];
-  signalValue.textContent = '0.00';
-  sampleCount.textContent = 'Echantiyon: 0';
-  meter.style.width = '0%';
-  statusTitle.textContent = 'An atant';
-  statusText.textContent = 'Pa gen aparèy EEG konekte';
-  feedback.textContent = 'Kòmanse grafik la pou wè siyal simulation an.';
-  dot.style.background = '#e7bd67';
-  graphState.textContent = 'Estati: kanpe';
-  drawGraph();
-  addLog('Simulation reyajiste.');
-});
+    const noise = (Math.random() - 0.5) * 0.19;
+    return Math.max(-1, Math.min(1, base + noise));
+  }
 
-document.querySelectorAll('[data-cmd]').forEach(button => {
-  button.addEventListener('click', () => {
-    addLog('Kòmand manyèl: ' + button.dataset.cmd +
-      '. Pa gen aksyon sou sistèm iPhone nan.');
+  function drawGraph() {
+    if (!ctx) return;
+
+    const { width: w, height: h } = getSize();
+    if (!w || !h) return;
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "#07101e";
+    ctx.fillRect(0, 0, w, h);
+
+    // Kadriyaj grafik la
+    ctx.strokeStyle = "rgba(92, 135, 183, 0.15)";
+    ctx.lineWidth = 1;
+
+    for (let x = 0; x <= w; x += 25) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, h);
+      ctx.stroke();
+    }
+
+    for (let y = 0; y <= h; y += 25) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+    }
+
+    ctx.strokeStyle = "rgba(73,245,229,0.2)";
+    ctx.beginPath();
+    ctx.moveTo(0, h / 2);
+    ctx.lineTo(w, h / 2);
+    ctx.stroke();
+
+    if (history.length < 2) {
+      ctx.fillStyle = "#91a4c3";
+      ctx.font = "12px sans-serif";
+      ctx.fillText("Peze Kòmanse pou lanse siyal simile a", 12, h / 2 - 10);
+      return;
+    }
+
+    const visible = history.slice(-Math.max(2, Math.floor(w / 2)));
+    const step = w / (visible.length - 1);
+
+    ctx.beginPath();
+    visible.forEach((value, i) => {
+      const x = i * step;
+      const y = h / 2 - value * h * 0.36;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+
+    ctx.strokeStyle = "#49f5e5";
+    ctx.lineWidth = 2;
+    ctx.shadowColor = "#49f5e5";
+    ctx.shadowBlur = 8;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    const last = visible[visible.length - 1];
+    const endY = h / 2 - last * h * 0.36;
+    ctx.beginPath();
+    ctx.arc(w - 1, endY, 3, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+  }
+
+  function updateMetrics() {
+    if (!history.length) return;
+
+    const recent = history.slice(-100);
+    const meanSquare = recent.reduce((sum, v) => sum + v * v, 0) / recent.length;
+    const amplitude = Math.sqrt(meanSquare);
+    const noise = 8 + Math.random() * 18;
+    const frequency = 7 + Math.random() * 4;
+    const quality = Math.max(55, Math.min(99, Math.round(100 - noise * 1.5)));
+
+    $("amplitude").textContent = amplitude.toFixed(2);
+    $("frequency").textContent = frequency.toFixed(1);
+    $("noise").textContent = Math.round(noise);
+    $("quality").textContent = quality + "%";
+
+    $("ampBar").style.width = Math.min(100, amplitude * 100) + "%";
+    $("freqBar").style.width = (frequency / 15 * 100) + "%";
+    $("noiseBar").style.width = noise + "%";
+    $("qualityBar").style.width = quality + "%";
+  }
+
+  function updateStatus() {
+    $("statusDot").classList.toggle("live", running);
+    $("statusText").textContent = running
+      ? (autoMode ? "Similatè aktif · mòd otomatik" : "Similatè aktif · mòd manyèl")
+      : "Similatè a kanpe";
+    $("signalBadge").textContent = running ? "AN KOU" : "AN ATANT";
+    $("signalBadge").classList.toggle("live", running);
+    $("startBtn").disabled = running;
+    $("stopBtn").disabled = !running;
+    $("autoBtn").disabled = autoMode;
+    $("manualBtn").disabled = !autoMode;
+    $("commandMode").textContent = autoMode ? "OTOMATIK" : "MANYÈL";
+  }
+
+  function issueCommand(name, source = "Manyèl") {
+    const command = commands.find(c => c.name === name);
+    if (!command) return;
+
+    $("resultTitle").textContent = command.title;
+    $("resultDesc").textContent = command.desc;
+
+    const now = new Date();
+    log.unshift({
+      name,
+      source,
+      time: now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+    });
+
+    log = log.slice(0, 30);
+    renderLog();
+  }
+
+  function renderLog() {
+    $("logCount").textContent = log.length + (log.length === 1 ? " kòmand" : " kòmand");
+    const list = $("logList");
+    list.innerHTML = "";
+
+    if (!log.length) {
+      const li = document.createElement("li");
+      li.className = "empty";
+      li.textContent = "Pa gen tès pou kounye a.";
+      list.appendChild(li);
+      return;
+    }
+
+    log.forEach(item => {
+      const li = document.createElement("li");
+      const left = document.createElement("span");
+      const right = document.createElement("small");
+      left.textContent = item.name + " · " + item.source;
+      right.textContent = item.time;
+      li.append(left, right);
+      list.appendChild(li);
+    });
+  }
+
+  function tick(timestamp) {
+    if (!running) return;
+
+    if (!lastTime) lastTime = timestamp;
+    const delta = Math.min((timestamp - lastTime) / 1000, 0.05);
+    lastTime = timestamp;
+    elapsed += delta;
+    phase += delta;
+
+    // Plizyè pwen pou kreye yon siyal atifisyèl k ap deplase.
+    for (let i = 0; i < 3; i++) {
+      history.push(makeSignal(phase + i * 0.012));
+      sampleTotal++;
+    }
+
+    if (history.length > 1500) {
+      history.splice(0, history.length - 1500);
+    }
+
+    drawGraph();
+    $("sampleCount").textContent = sampleTotal + " echantiyon";
+    $("clock").textContent = elapsed.toFixed(1) + " s";
+
+    if (timestamp - lastMetricsUpdate > 300) {
+      updateMetrics();
+      lastMetricsUpdate = timestamp;
+    }
+
+    if (autoMode && timestamp - lastAutoTime > 4000) {
+      lastAutoTime = timestamp;
+      const choice = commands[Math.floor(Math.random() * commands.length)];
+      issueCommand(choice.name, "Otomatik");
+    }
+
+    frameId = requestAnimationFrame(tick);
+  }
+
+  function start() {
+    if (running) return;
+    running = true;
+    lastTime = 0;
+    updateStatus();
+    frameId = requestAnimationFrame(tick);
+  }
+
+  function stop() {
+    running = false;
+    if (frameId !== null) cancelAnimationFrame(frameId);
+    frameId = null;
+    lastTime = 0;
+    updateStatus();
+    drawGraph();
+  }
+
+  function reset() {
+    stop();
+    autoMode = false;
+    elapsed = 0;
+    phase = 0;
+    sampleTotal = 0;
+    history = [];
+    lastAutoTime = 0;
+    lastMetricsUpdate = 0;
+
+    $("amplitude").textContent = "0.00";
+    $("frequency").textContent = "8.0";
+    $("noise").textContent = "12";
+    $("quality").textContent = "—";
+    $("ampBar").style.width = "0%";
+    $("freqBar").style.width = "0%";
+    $("noiseBar").style.width = "0%";
+    $("qualityBar").style.width = "0%";
+    $("sampleCount").textContent = "0 echantiyon";
+    $("clock").textContent = "0.0 s";
+    $("resultTitle").textContent = "Pa gen kòmand ankò";
+    $("resultDesc").textContent = "Kòmanse demonstrasyon an epi teste youn nan kòmand yo.";
+
+    updateStatus();
+    drawGraph();
+  }
+
+  $("startBtn").addEventListener("click", start);
+  $("stopBtn").addEventListener("click", stop);
+  $("resetBtn").addEventListener("click", reset);
+
+  document.querySelectorAll("[data-command]").forEach(button => {
+    button.addEventListener("click", () => {
+      issueCommand(button.dataset.command, "Manyèl");
+    });
   });
-});
 
-document.getElementById('clear').addEventListener('click', () => {
-  log.replaceChildren();
-  const e = document.createElement('div');
-  e.className = 'event';
-  e.textContent = 'Jounal la netwaye.';
-  log.append(e);
-});
+  $("autoBtn").addEventListener("click", () => {
+    autoMode = true;
+    lastAutoTime = performance.now();
+    updateStatus();
+    if (!running) start();
+  });
 
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+  $("manualBtn").addEventListener("click", () => {
+    autoMode = false;
+    updateStatus();
+  });
+
+  $("clearLogBtn").addEventListener("click", () => {
+    log = [];
+    renderLog();
+  });
+
+  window.addEventListener("resize", resizeCanvas);
+
+  resizeCanvas();
+  renderLog();
+  updateStatus();
+})();
 </script>
 </body>
 </html>
